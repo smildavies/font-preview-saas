@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "font-saas",
+      "runtimeExecutable": "/Users/trenisedavies-bell/node/bin/node",
+      "runtimeArgs": ["/Users/trenisedavies-bell/Desktop/font-preview-saas/node_modules/.bin/next", "dev"],
+      "port": 3000,
+      "cwd": "/Users/trenisedavies-bell/Desktop/font-preview-saas"
+    }
+  ]
+}

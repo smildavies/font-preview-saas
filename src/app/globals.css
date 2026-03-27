@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #09090b;
+  --foreground: #fafafa;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Font cycling animation for hero */
+@keyframes fontCycle {
+  0%, 14% {
+    font-family: Arial, sans-serif;
+  }
+  16.66%, 30% {
+    font-family: Georgia, serif;
+  }
+  33.33%, 47% {
+    font-family: "Courier New", monospace;
+  }
+  50%, 64% {
+    font-family: "Comic Sans MS", cursive;
+  }
+  66.66%, 80% {
+    font-family: Impact, sans-serif;
+  }
+  83.33%, 97% {
+    font-family: Palatino, serif;
+  }
+  100% {
+    font-family: Arial, sans-serif;
+  }
+}
+
+@keyframes fontLabelCycle {
+  0%, 14% { content: "Arial"; }
+  16.66%, 30% { content: "Georgia"; }
+  33.33%, 47% { content: "Courier New"; }
+  50%, 64% { content: "Comic Sans MS"; }
+  66.66%, 80% { content: "Impact"; }
+  83.33%, 97% { content: "Palatino"; }
+  100% { content: "Arial"; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-font-cycle {
+  animation: fontCycle 12s infinite;
+}
+
+.animate-font-label::after {
+  content: "Arial";
+  animation: fontLabelCycle 12s infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
 }

@@ -1,18 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '@/hooks/useUser'
 import { useLocalFonts, type LocalFont } from '@/hooks/useLocalFonts'
+import { useGoogleFonts } from '@/hooks/useGoogleFonts'
 import Controls from '@/components/Controls'
 import GlyphModal from '@/components/GlyphModal'
 import MockupModal from '@/components/MockupModal'
 import PairingModal from '@/components/PairingModal'
 import SimilarFontsPanel from '@/components/SimilarFontsPanel'
 import ShareModal from '@/components/ShareModal'
+import BrowserBanner from '@/components/BrowserBanner'
 
 export default function DashboardPage() {
   const { isPro } = useUser()
-  const { fonts: allFonts, loading, method, totalCount } = useLocalFonts()
+  const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal } = useLocalFonts()
+  const { fonts: googleFontsList, loading: googleLoading, loadFont: loadGoogleFont, totalCount: googleTotal } = useGoogleFonts()
+
+  // Font source tab
+  const [fontSource, setFontSource] = useState<'local' | 'google'>('local')
+
+  // Convert Google fonts to LocalFont shape for unified rendering
+  const googleFontsAsLocal: LocalFont[] = googleFontsList.map((gf, i) => ({
+    family: gf.family,
+    fullName: gf.family,
+    postscriptName: gf.family.replace(/\s/g, '-'),
+    style: gf.category,
+    familyId: `google-${i}`,
+  }))
+
+  const allFonts = fontSource === 'local' ? localFonts : googleFontsAsLocal
+  const loading = fontSource === 'local' ? localLoading : googleLoading
+  const totalCount = fontSource === 'local' ? localTotal : googleTotal
 
   // Preview settings
   const [text, setText] = useState('Hello World')
@@ -103,8 +122,60 @@ export default function DashboardPage() {
 
   const previewText = uppercase ? (text || 'Hello World').toUpperCase() : (text || 'Hello World')
 
+  // Load Google fonts as they scroll into view
+  useEffect(() => {
+    if (fontSource !== 'google') return
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const family = entry.target.getAttribute('data-font-family')
+          if (family) loadGoogleFont(family)
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { rootMargin: '200px' })
+
+    document.querySelectorAll('[data-font-family]').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [fontSource, filteredFonts, loadGoogleFont])
+
   return (
     <div className="min-h-screen">
+      {/* Browser Banner */}
+      <BrowserBanner />
+
+      {/* Font Source Tabs */}
+      <div className="border-b border-zinc-800 bg-zinc-950">
+        <div className="flex items-center gap-0 px-6">
+          <button
+            onClick={() => setFontSource('local')}
+            className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
+              fontSource === 'local'
+                ? 'border-violet-500 text-violet-400'
+                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+            }`}
+          >
+            My Fonts
+            <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+              {localTotal}
+            </span>
+          </button>
+          <button
+            onClick={() => setFontSource('google')}
+            className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
+              fontSource === 'google'
+                ? 'border-violet-500 text-violet-400'
+                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+            }`}
+          >
+            Google Fonts
+            <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+              {googleTotal || '1,500+'}
+            </span>
+          </button>
+        </div>
+      </div>
+
       {/* Controls */}
       <Controls
         text={text} setText={setText}
@@ -183,6 +254,7 @@ export default function DashboardPage() {
                   return (
                   <div
                     key={font.familyId}
+                    data-font-family={fontSource === 'google' ? font.family : undefined}
                     className="group rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden hover:border-violet-600/50 transition-all"
                   >
                     {/* Header */}

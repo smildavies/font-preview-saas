@@ -296,7 +296,6 @@ export default function Home() {
 
       {/* ===== AI FONT PAIRING SHOWCASE ===== */}
       <section className="py-24 bg-white/[0.02] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -375,7 +374,6 @@ export default function Home() {
 
       {/* ===== GLYPH EXPLORER SHOWCASE ===== */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-600/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Visual glyph grid */}
@@ -769,10 +767,8 @@ export default function Home() {
       </section>
 
       {/* ===== FINAL CTA ===== */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-violet-950/20 to-zinc-950" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-violet-600/10 rounded-full blur-3xl" />
-        <div className="relative max-w-3xl mx-auto px-6 text-center">
+      <section className="py-24 bg-zinc-950">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             Ready to Preview Your Fonts?
           </h2>

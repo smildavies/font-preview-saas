@@ -181,7 +181,7 @@ export default function Home() {
       </nav>
 
       {/* ===== HERO SECTION ===== */}
-      <section className="bg-zinc-950">
+      <section className="bg-zinc-950" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124, 58, 237, 0.15), #09090b 70%)" }}>
         <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
           <div className="flex flex-col items-center text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl ">

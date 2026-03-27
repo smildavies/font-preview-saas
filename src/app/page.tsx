@@ -240,19 +240,22 @@ export default function Home() {
       <section className="border-y border-white/5 bg-white/[0.02]">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <p className="text-center text-sm text-zinc-500 mb-6">
-            Trusted by designers at
+            Built for designers, by designers
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
-            {["Shopify", "Figma", "Canva", "Adobe", "Squarespace"].map(
-              (name) => (
-                <span
-                  key={name}
-                  className="text-lg font-semibold text-zinc-600 tracking-wide"
-                >
-                  {name}
-                </span>
-              )
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { value: "1,500+", label: "Google Fonts" },
+              { value: "500+", label: "System Fonts Detected" },
+              { value: "6", label: "Mockup Templates" },
+              { value: "\u221E", label: "Unlimited Comparisons" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+                  {stat.value}
+                </p>
+                <p className="text-xs md:text-sm text-zinc-500 mt-1">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -291,6 +294,161 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== AI FONT PAIRING SHOWCASE ===== */}
+      <section className="py-24 bg-white/[0.02] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  New
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-violet-500/20 text-violet-400 border border-violet-500/30">
+                  Only on FontPreview
+                </span>
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                AI-Powered Font Pairing.{" "}
+                <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+                  Like Nothing Else.
+                </span>
+              </h2>
+              <p className="text-lg text-zinc-400 leading-relaxed mb-6">
+                Our AI analyzes font characteristics — weight, x-height, contrast, and
+                style — to suggest heading + body combinations that actually work
+                together. Stop guessing. Start pairing with confidence.
+              </p>
+              <ul className="space-y-3 text-sm text-zinc-400">
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Analyzes contrast, proportion, and mood
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Suggests complementary heading + body combos
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Works with your local fonts and Google Fonts
+                </li>
+              </ul>
+            </div>
+            {/* Visual mockup */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8">
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+                <span className="text-sm font-medium text-violet-400">AI Pairing Suggestion</span>
+                <span className="ml-auto text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">98% Match</span>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-white/10 p-6 mb-4">
+                <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">Heading</p>
+                <p className="text-3xl font-bold text-white" style={{ fontFamily: "Georgia, serif" }}>
+                  Playfair Display
+                </p>
+                <p className="text-xs text-zinc-600 mt-1">Serif &middot; High contrast &middot; Elegant</p>
+              </div>
+              <div className="flex items-center justify-center my-3">
+                <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
+                  <span className="text-violet-400 text-xs font-bold">+</span>
+                </div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-white/10 p-6 mb-6">
+                <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">Body</p>
+                <p className="text-xl text-white/90" style={{ fontFamily: "system-ui, sans-serif" }}>
+                  Inter — The quick brown fox jumps over the lazy dog
+                </p>
+                <p className="text-xs text-zinc-600 mt-1">Sans-serif &middot; Neutral &middot; Highly readable</p>
+              </div>
+              <div className="rounded-xl bg-gradient-to-r from-violet-600/10 to-pink-600/10 border border-violet-500/20 p-4">
+                <p className="text-xs text-zinc-400">
+                  <span className="text-violet-400 font-medium">Why this works:</span> The high contrast of Playfair Display
+                  creates visual hierarchy, while Inter&apos;s neutral geometry provides excellent body readability.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== GLYPH EXPLORER SHOWCASE ===== */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-600/5 rounded-full blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Visual glyph grid */}
+            <div className="order-2 lg:order-1 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="text-sm font-medium text-white">Glyph Explorer</p>
+                  <p className="text-xs text-zinc-500">Georgia &middot; 248 glyphs available</p>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 border border-white/10 text-zinc-400">Latin</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-violet-500/20 border border-violet-500/30 text-violet-400">All</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-7 gap-2">
+                {["A", "B", "C", "R", "a", "g", "k", "&", "@", "!", "?", "#", "\u00e9", "\u00f1", "\u00e6", "\u00df", "\u2014", "\u2026", "\u00a9", "\u2122", "\u2192"].map(
+                  (glyph) => (
+                    <div
+                      key={glyph}
+                      className="aspect-square rounded-lg bg-zinc-900/80 border border-white/10 flex items-center justify-center text-xl text-white/90 hover:border-violet-500/40 hover:bg-violet-600/10 transition-all cursor-pointer"
+                      style={{ fontFamily: "Georgia, serif" }}
+                    >
+                      {glyph}
+                    </div>
+                  )
+                )}
+              </div>
+              <div className="mt-4 flex items-center gap-4 text-xs text-zinc-500">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-violet-500" />
+                  Unicode: U+0041
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-pink-500" />
+                  Category: Uppercase Letter
+                </span>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                Every Character. Every Symbol.{" "}
+                <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+                  Every Glyph.
+                </span>
+              </h2>
+              <p className="text-lg text-zinc-400 leading-relaxed mb-6">
+                Dive deep into any font&apos;s character set. Browse all available glyphs,
+                view Unicode mappings, discover hidden ligatures, and find the special
+                symbols you need — all in a beautiful, searchable grid.
+              </p>
+              <ul className="space-y-3 text-sm text-zinc-400">
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Full Unicode character browsing
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Ligature and alternate glyph discovery
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Special symbols, diacritics, and currency marks
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Click any glyph to copy it instantly
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -452,6 +610,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== WHY FONTPREVIEW COMPARISON TABLE ===== */}
+      <section className="py-24">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+            Why FontPreview?
+          </h2>
+          <p className="text-zinc-400 text-center mb-14 max-w-xl mx-auto">
+            See how we stack up against the alternatives.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-4 px-4 text-zinc-400 font-medium">Feature</th>
+                  <th className="py-4 px-4 text-center">
+                    <span className="text-violet-400 font-bold">FontPreview</span>
+                  </th>
+                  <th className="py-4 px-4 text-center text-zinc-500">wordmark.it</th>
+                  <th className="py-4 px-4 text-center text-zinc-500">FontBase</th>
+                  <th className="py-4 px-4 text-center text-zinc-500">WhatTheFont</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { feature: "Auto Font Detection", fp: true, wm: true, fb: false, wf: false },
+                  { feature: "AI Font Pairing", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Glyph Explorer", fp: true, wm: false, fb: true, wf: false },
+                  { feature: "Mockup Templates", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Client Sharing", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Brand Kits", fp: true, wm: false, fb: false, wf: false },
+                ].map((row) => (
+                  <tr key={row.feature} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3.5 px-4 text-zinc-300">{row.feature}</td>
+                    {[row.fp, row.wm, row.fb, row.wf].map((val, i) => (
+                      <td key={i} className="py-3.5 px-4 text-center">
+                        {val ? (
+                          <svg className="w-5 h-5 text-emerald-400 mx-auto" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-zinc-700 mx-auto" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* ===== PRICING PREVIEW ===== */}
       <section id="pricing" className="py-24">
         <div className="max-w-4xl mx-auto px-6">
@@ -596,7 +808,7 @@ export default function Home() {
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             </div>
             <p className="text-sm text-zinc-600">
-              &copy; 2024 FontPreview. All rights reserved.
+              &copy; 2025 FontPreview. All rights reserved.
             </p>
           </div>
         </div>

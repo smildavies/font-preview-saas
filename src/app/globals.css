@@ -17,6 +17,21 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
+/* Fix: hide any invisible/broken elements that render as black boxes */
+div[hidden],
+body > div[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Fix: ensure no font preload creates visible artifacts */
+link[rel="preload"][as="font"] {
+  display: none !important;
+}
+
 /* Font cycling animation for hero */
 @keyframes fontCycle {
   0%, 14% {

@@ -184,17 +184,17 @@ export default function Home() {
       <section className="relative bg-gradient-to-b from-violet-950/40 via-zinc-950 to-zinc-950">
         <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl ">
               See Every Font on Your Computer.{" "}
               <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
                 Instantly.
               </span>
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-zinc-400 max-w-2xl animate-fade-in-up animation-delay-200">
+            <p className="mt-6 text-lg md:text-xl text-zinc-400 max-w-2xl ">
               No uploads. No installs. FontPreview detects all your fonts and
               lets you preview, compare, and share them — in seconds.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-400">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 ">
               <Link
                 href="/login"
                 className="px-8 py-3.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-semibold text-base transition-all hover:shadow-lg hover:shadow-violet-600/25"
@@ -216,9 +216,9 @@ export default function Home() {
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
                   <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                   <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                  <span className="ml-3 text-xs text-zinc-500 animate-font-label" />
+                  <span className="ml-3 text-xs text-zinc-500">Arial</span>
                 </div>
-                <p className="animate-font-cycle text-3xl md:text-4xl lg:text-5xl text-white/90 leading-tight transition-all">
+                <p className="text-3xl md:text-4xl lg:text-5xl text-white/90 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
                   The quick brown fox jumps over the lazy dog
                 </p>
                 <div className="mt-6 flex items-center gap-3 text-xs text-zinc-500">

@@ -245,7 +245,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: "1,500+", label: "Google Fonts" },
-              { value: "500+", label: "System Fonts Detected" },
+              { value: "All", label: "Your Installed Fonts" },
               { value: "6", label: "Mockup Templates" },
               { value: "\u221E", label: "Unlimited Comparisons" },
             ].map((stat) => (

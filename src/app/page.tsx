@@ -152,7 +152,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950">
       {/* ===== STICKY NAVBAR ===== */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950/80 backdrop-blur-lg">
+      <nav className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-white">
             Font<span className="text-violet-400">Preview</span>
@@ -181,11 +181,8 @@ export default function Home() {
       </nav>
 
       {/* ===== HERO SECTION ===== */}
-      <section className="relative overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-violet-950/40 via-zinc-950 to-zinc-950" />
-
-        <div className="relative max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
+      <section className="relative bg-gradient-to-b from-violet-950/40 via-zinc-950 to-zinc-950">
+        <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
           <div className="flex flex-col items-center text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl animate-fade-in-up">
               See Every Font on Your Computer.{" "}

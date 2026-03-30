@@ -33,7 +33,7 @@ export default function DashboardShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="text-lg font-bold text-white">
-              FontPreview
+              My Font Preview
             </Link>
             <Link
               href="/dashboard/brand-kits"

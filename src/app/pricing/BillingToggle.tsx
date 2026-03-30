@@ -282,7 +282,7 @@ export default function BillingToggle() {
             },
             {
               q: "Do you offer team plans?",
-              a: "Team plans are coming soon! If you are interested in early access for your team, contact us at hello@fontpreview.app and we will get you set up.",
+              a: "Team plans are coming soon! If you are interested in early access for your team, contact us at hello@myfontpreview.com and we will get you set up.",
             },
           ].map(({ q, a }) => (
             <details
@@ -316,7 +316,7 @@ export default function BillingToggle() {
             Ready to unlock all features?
           </h2>
           <p className="mt-3 text-zinc-400 max-w-md mx-auto">
-            Join thousands of designers who use FontPreview Pro to streamline their typography workflow.
+            Join thousands of designers who use My Font Preview Pro to streamline their typography workflow.
           </p>
           <Link
             href="/login"

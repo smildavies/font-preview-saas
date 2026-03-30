@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Privacy Policy - FontPreview',
+  title: 'Privacy Policy - My Font Preview',
 }
 
 export default function PrivacyPage() {
@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-zinc-950 text-zinc-300">
       <nav className="border-b border-zinc-800 px-6 py-4">
         <Link href="/" className="text-lg font-bold text-white">
-          Font<span className="text-violet-400">Preview</span>
+          My Font <span className="text-violet-400">Preview</span>
         </Link>
       </nav>
 
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">1. Introduction</h2>
             <p>
-              FontPreview (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy
+              My Font Preview (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy
               explains how we collect, use, and safeguard your information when you use our web-based font
               preview service (&quot;the Service&quot;).
             </p>
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
               <strong className="text-violet-400">We do NOT collect, upload, store, or transmit your font files.</strong>{' '}
               Font detection happens entirely within your browser using standard browser APIs. Your fonts
               never leave your device. We have no access to your font files or information about which
-              fonts are installed on your computer.
+              fonts are installed on your device.
             </p>
 
             <h3 className="text-sm font-semibold text-zinc-200 mt-4 mb-2">Usage Data</h3>
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-2">
               To exercise any of these rights, contact us at{' '}
-              <span className="text-violet-400">privacy@fontpreview.com</span>.
+              <span className="text-violet-400">privacy@myfontpreview.com</span>.
             </p>
           </section>
 
@@ -161,7 +161,7 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-semibold text-white mb-3">12. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, contact us at{' '}
-              <span className="text-violet-400">privacy@fontpreview.com</span>.
+              <span className="text-violet-400">privacy@myfontpreview.com</span>.
             </p>
           </section>
         </div>

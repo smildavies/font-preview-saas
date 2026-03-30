@@ -175,7 +175,7 @@ export default function ShareView({ collection }: ShareViewProps) {
         {/* Footer */}
         <div className="mt-12 text-center">
           <p className="text-xs text-zinc-600">
-            Shared via FontPreview
+            Shared via My Font Preview
           </p>
         </div>
       </div>

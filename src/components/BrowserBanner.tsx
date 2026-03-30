@@ -32,7 +32,7 @@ export default function BrowserBanner() {
         </svg>
         <p className="text-sm text-zinc-300">
           <span className="font-medium text-violet-400">Want to see ALL your installed fonts?</span>
-          {' '}Open FontPreview in Chrome or Edge for full font detection. You can also browse 1,500+ Google Fonts below.
+          {' '}Open My Font Preview in Chrome or Edge for full font detection. You can also browse 1,500+ Google Fonts below.
         </p>
       </div>
       <button

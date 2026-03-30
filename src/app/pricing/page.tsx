@@ -2,9 +2,9 @@ import Link from "next/link";
 import BillingToggle from "./BillingToggle";
 
 export const metadata = {
-  title: "Pricing - FontPreview",
+  title: "Pricing - My Font Preview",
   description:
-    "Simple, transparent pricing for FontPreview. Start free, upgrade when you need more power.",
+    "Simple, transparent pricing for My Font Preview. Start free, upgrade when you need more power.",
 };
 
 export default function PricingPage() {
@@ -20,7 +20,7 @@ export default function PricingPage() {
       <nav className="relative z-10 border-b border-zinc-800/60 backdrop-blur-md bg-zinc-950/60">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-white">
-            Font<span className="text-violet-500">Preview</span>
+            My Font <span className="text-violet-500">Preview</span>
           </Link>
           <Link
             href="/login"
@@ -52,7 +52,7 @@ export default function PricingPage() {
       {/* ─── Footer ─── */}
       <footer className="relative z-10 mt-auto border-t border-zinc-800/60 py-8">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-zinc-500">
-          &copy; {new Date().getFullYear()} FontPreview. All rights reserved.
+          &copy; {new Date().getFullYear()} My Font Preview. All rights reserved.
         </div>
       </footer>
     </div>

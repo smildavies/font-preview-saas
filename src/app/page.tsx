@@ -91,7 +91,7 @@ const features = [
 const testimonials = [
   {
     quote:
-      "FontPreview saved me hours of font hunting. The mockup templates are incredible.",
+      "My Font Preview saved me hours of font hunting. The mockup templates are incredible.",
     name: "Sarah K.",
     role: "Brand Designer",
   },
@@ -103,7 +103,7 @@ const testimonials = [
   },
   {
     quote:
-      "I cancelled my other font tools. FontPreview does everything in one place.",
+      "I cancelled my other font tools. My Font Preview does everything in one place.",
     name: "Priya R.",
     role: "UI Designer",
   },
@@ -111,12 +111,12 @@ const testimonials = [
 
 const faqs = [
   {
-    q: "How does FontPreview detect my fonts?",
-    a: "FontPreview uses modern browser APIs (the Local Font Access API) to securely detect fonts installed on your computer. Your browser will ask for permission the first time, and then all your fonts appear instantly.",
+    q: "How does My Font Preview detect my fonts?",
+    a: "My Font Preview uses modern browser APIs (the Local Font Access API) to securely detect fonts installed on your computer. Your browser will ask for permission the first time, and then all your fonts appear instantly.",
   },
   {
     q: "Do I need to upload my fonts?",
-    a: "No! That\u2019s the magic. FontPreview detects your locally installed fonts automatically. No uploading, no file management, no hassle.",
+    a: "No! That\u2019s the magic. My Font Preview detects your locally installed fonts automatically. No uploading, no file management, no hassle.",
   },
   {
     q: "What browsers are supported?",
@@ -128,7 +128,7 @@ const faqs = [
   },
   {
     q: "Is my font data stored?",
-    a: "No. Your fonts stay on your computer. We never upload, store, or have access to your font files. FontPreview reads font metadata in your browser only.",
+    a: "No. Your fonts stay on your computer. We never upload, store, or have access to your font files. My Font Preview reads font metadata in your browser only.",
   },
   {
     q: "Can clients use the share links without an account?",
@@ -155,7 +155,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-white">
-            Font<span className="text-violet-400">Preview</span>
+            My Font <span className="text-violet-400">Preview</span>
           </Link>
           <div className="flex items-center gap-6">
             <Link
@@ -191,7 +191,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-zinc-400 max-w-2xl ">
-              No uploads. No installs. FontPreview detects all your fonts and
+              No uploads. No installs. My Font Preview detects all your fonts and
               lets you preview, compare, and share them — in seconds.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 ">
@@ -304,7 +304,7 @@ export default function Home() {
                   New
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-violet-500/20 text-violet-400 border border-violet-500/30">
-                  Only on FontPreview
+                  Only on My Font Preview
                 </span>
               </div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
@@ -544,7 +544,7 @@ export default function Home() {
             {[
               {
                 num: "1",
-                title: "Open FontPreview",
+                title: "Open My Font Preview",
                 desc: "Your fonts are detected automatically. No uploads needed.",
               },
               {
@@ -608,7 +608,7 @@ export default function Home() {
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
-            Why FontPreview?
+            Why My Font Preview?
           </h2>
           <p className="text-zinc-400 text-center mb-14 max-w-xl mx-auto">
             See how we stack up against the alternatives.
@@ -619,7 +619,7 @@ export default function Home() {
                 <tr className="border-b border-white/10">
                   <th className="text-left py-4 px-4 text-zinc-400 font-medium">Feature</th>
                   <th className="py-4 px-4 text-center">
-                    <span className="text-violet-400 font-bold">FontPreview</span>
+                    <span className="text-violet-400 font-bold">My Font Preview</span>
                   </th>
                   <th className="py-4 px-4 text-center text-zinc-500">wordmark.it</th>
                   <th className="py-4 px-4 text-center text-zinc-500">FontBase</th>
@@ -773,7 +773,7 @@ export default function Home() {
             Ready to Preview Your Fonts?
           </h2>
           <p className="text-lg text-zinc-400 mb-10">
-            Join thousands of designers who trust FontPreview for their
+            Join thousands of designers who trust My Font Preview for their
             typography workflow.
           </p>
           <Link
@@ -790,7 +790,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Link href="/" className="text-lg font-bold text-white">
-              Font<span className="text-violet-400">Preview</span>
+              My Font <span className="text-violet-400">Preview</span>
             </Link>
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-zinc-500">
               <Link href="#features" className="hover:text-white transition-colors">Features</Link>
@@ -800,7 +800,7 @@ export default function Home() {
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             </div>
             <p className="text-sm text-zinc-600">
-              &copy; 2025 FontPreview. All rights reserved.
+              &copy; {new Date().getFullYear()} My Font Preview. All rights reserved.
             </p>
           </div>
         </div>

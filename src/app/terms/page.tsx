@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Terms of Service - FontPreview',
+  title: 'Terms of Service - My Font Preview',
 }
 
 export default function TermsPage() {
@@ -9,7 +9,7 @@ export default function TermsPage() {
     <div className="min-h-screen bg-zinc-950 text-zinc-300">
       <nav className="border-b border-zinc-800 px-6 py-4">
         <Link href="/" className="text-lg font-bold text-white">
-          Font<span className="text-violet-400">Preview</span>
+          My Font <span className="text-violet-400">Preview</span>
         </Link>
       </nav>
 
@@ -21,7 +21,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using FontPreview (&quot;the Service&quot;), you agree to be bound by these Terms of Service.
+              By accessing or using My Font Preview (&quot;the Service&quot;), you agree to be bound by these Terms of Service.
               If you do not agree to these terms, do not use the Service. We reserve the right to modify these terms
               at any time, and your continued use of the Service constitutes acceptance of any changes.
             </p>
@@ -30,7 +30,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">2. Description of Service</h2>
             <p>
-              FontPreview is a web-based font preview and management tool that detects fonts installed on your
+              My Font Preview is a web-based font preview and management tool that detects fonts installed on your
               device, allows you to preview them with custom text, compare fonts, create brand kits, generate
               shareable preview links, and export font previews. The Service is provided on a freemium model
               with optional paid subscription plans.
@@ -53,7 +53,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">4. Subscription and Payments</h2>
             <p className="mb-2">
-              FontPreview offers free and paid subscription plans. For paid plans:
+              My Font Preview offers free and paid subscription plans. For paid plans:
             </p>
             <ul className="list-disc list-inside space-y-1 text-zinc-400">
               <li>Payments are processed securely through Stripe</li>
@@ -84,7 +84,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-white mb-3">6. Intellectual Property</h2>
             <p className="mb-2">
               The Service, including its design, layout, code, features, algorithms, branding, and all related
-              intellectual property, is owned by FontPreview and protected by copyright, trademark, and other
+              intellectual property, is owned by My Font Preview and protected by copyright, trademark, and other
               intellectual property laws.
             </p>
             <p className="mb-2">
@@ -93,7 +93,7 @@ export default function TermsPage() {
               the purpose of providing the Service to you.
             </p>
             <p>
-              The fonts detected on your device remain the property of their respective owners. FontPreview does
+              The fonts detected on your device remain the property of their respective owners. My Font Preview does
               not claim ownership of any fonts and does not upload, store, or redistribute your font files.
             </p>
           </section>
@@ -101,7 +101,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">7. Font Data and Privacy</h2>
             <p>
-              FontPreview detects fonts installed on your device using browser APIs. Your font files are never
+              My Font Preview detects fonts installed on your device using browser APIs. Your font files are never
               uploaded to our servers. Font detection happens entirely within your browser. We do not collect,
               store, or share information about which fonts are installed on your device. See our{' '}
               <Link href="/privacy" className="text-violet-400 hover:text-violet-300">Privacy Policy</Link>{' '}
@@ -122,7 +122,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">9. Limitation of Liability</h2>
             <p>
-              To the maximum extent permitted by law, FontPreview shall not be liable for any indirect, incidental,
+              To the maximum extent permitted by law, My Font Preview shall not be liable for any indirect, incidental,
               special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred
               directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting
               from your use of the Service.
@@ -152,7 +152,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-white mb-3">12. Contact</h2>
             <p>
               If you have any questions about these Terms of Service, please contact us at{' '}
-              <span className="text-violet-400">support@fontpreview.com</span>.
+              <span className="text-violet-400">support@myfontpreview.com</span>.
             </p>
           </section>
         </div>

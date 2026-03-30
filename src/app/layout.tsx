@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FontPreview - Preview Your Fonts Online",
+  title: "My Font Preview - Preview Your Fonts Online",
   description:
-    "Upload, preview, and manage your font collections. Compare fonts side-by-side, explore glyphs, and export previews as PNG.",
+    "Instantly preview every font on your computer. Compare fonts side-by-side, explore glyphs, and export previews as PNG.",
 };
 
 export default function RootLayout({

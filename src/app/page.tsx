@@ -86,6 +86,72 @@ const features = [
       </svg>
     ),
   },
+  {
+    title: "Font Mixer",
+    description:
+      "Mix and match different fonts per letter to create unique word art. AI suggests creative combinations.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Monogram Builder",
+    description:
+      "Create stunning monograms for weddings, gifts, and crafts. 8 frame styles, gold/rose gold themes, SVG export.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Crafter Mockups",
+    description:
+      "See your fonts on mugs, tumblers, tote bags, wooden signs, stickers, t-shirts, and more. Export as PNG.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+      </svg>
+    ),
+  },
+  {
+    title: "SVG Export for Cricut",
+    description:
+      "Export text and monograms as SVG files — ready for Cricut Design Space and Silhouette Studio.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+      </svg>
+    ),
+  },
+  {
+    title: "Font Mood Finder",
+    description:
+      "Browse fonts by style — elegant, farmhouse, modern, vintage, whimsical, bold, boho, and handwritten.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Wedding & Event Templates",
+    description:
+      "Preview fonts on wedding invitations, save-the-dates, menus, birthday parties, and baby showers.",
+    isNew: true,
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+      </svg>
+    ),
+  },
 ];
 
 const testimonials = [
@@ -106,6 +172,24 @@ const testimonials = [
       "I cancelled my other font tools. My Font Preview does everything in one place.",
     name: "Priya R.",
     role: "UI Designer",
+  },
+  {
+    quote:
+      "The monogram builder and SVG export are perfect for my Cricut projects. I use this every single day.",
+    name: "Jessica L.",
+    role: "Crafter & Etsy Seller",
+  },
+  {
+    quote:
+      "Font Mood Finder is genius. I just click 'Farmhouse' and instantly see all my rustic fonts. Saves me so much time.",
+    name: "Ashley M.",
+    role: "Wedding Stationery Designer",
+  },
+  {
+    quote:
+      "The Font Mixer lets me create custom word art for my tumbler business. Nothing else does this!",
+    name: "Danielle W.",
+    role: "Custom Tumbler Crafter",
   },
 ];
 
@@ -604,7 +688,82 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== WHY FONTPREVIEW COMPARISON TABLE ===== */}
+      {/* ===== PERFECT FOR CRAFTERS ===== */}
+      <section className="py-24 bg-gradient-to-b from-zinc-950 to-zinc-900/50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 mb-4">
+              Made for Crafters
+            </span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+              The Font Tool Crafters{" "}
+              <span className="bg-gradient-to-r from-pink-400 to-amber-400 bg-clip-text text-transparent">
+                Have Been Waiting For
+              </span>
+            </h2>
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+              Whether you make tumblers, sell on Etsy, design wedding stationery, or cut vinyl with your Cricut — My Font Preview was built for you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: "🎨",
+                title: "Font Mixer",
+                desc: "Mix different fonts per letter. Create unique word art for tumblers, signs, and shirts.",
+              },
+              {
+                icon: "✨",
+                title: "Monogram Builder",
+                desc: "Beautiful monograms in seconds. 8 frames, gold/rose gold themes. Perfect for weddings & gifts.",
+              },
+              {
+                icon: "☕",
+                title: "Crafter Mockups",
+                desc: "See your fonts on mugs, tumblers, tote bags, wooden signs, pillows, mason jars, and more.",
+              },
+              {
+                icon: "✂️",
+                title: "SVG Export",
+                desc: "Export directly to SVG for Cricut Design Space and Silhouette Studio. Cut-ready files in one click.",
+              },
+              {
+                icon: "💒",
+                title: "Wedding Templates",
+                desc: "Preview fonts on invitations, save-the-dates, menus, and programs before committing.",
+              },
+              {
+                icon: "🌾",
+                title: "Font Mood Finder",
+                desc: "Find fonts by vibe — farmhouse, elegant, whimsical, boho, vintage, modern, and more.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 hover:border-pink-600/30 transition-all group"
+              >
+                <span className="text-3xl mb-4 block">{item.icon}</span>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/login"
+              className="inline-flex px-8 py-3.5 rounded-lg bg-gradient-to-r from-pink-600 to-amber-500 hover:from-pink-500 hover:to-amber-400 text-white font-semibold text-base transition-all hover:shadow-lg hover:shadow-pink-600/25"
+            >
+              Start Crafting for Free
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== WHY MY FONT PREVIEW COMPARISON TABLE ===== */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
@@ -634,6 +793,12 @@ export default function Home() {
                   { feature: "Mockup Templates", fp: true, wm: false, fb: false, wf: false },
                   { feature: "Client Sharing", fp: true, wm: false, fb: false, wf: false },
                   { feature: "Brand Kits", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Font Mixer (per-letter)", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Monogram Builder", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Crafter Mockups (10+)", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "SVG Export (Cricut)", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Font Mood Finder", fp: true, wm: false, fb: false, wf: false },
+                  { feature: "Wedding Templates", fp: true, wm: false, fb: false, wf: false },
                 ].map((row) => (
                   <tr key={row.feature} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="py-3.5 px-4 text-zinc-300">{row.feature}</td>

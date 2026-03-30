@@ -11,6 +11,11 @@ import PairingModal from '@/components/PairingModal'
 import SimilarFontsPanel from '@/components/SimilarFontsPanel'
 import ShareModal from '@/components/ShareModal'
 import BrowserBanner from '@/components/BrowserBanner'
+import FontMixer from '@/components/FontMixer'
+import MonogramBuilder from '@/components/MonogramBuilder'
+import CrafterMockups from '@/components/CrafterMockups'
+import FontMoodFinder from '@/components/FontMoodFinder'
+import WeddingTemplates from '@/components/WeddingTemplates'
 
 export default function DashboardPage() {
   const { isPro } = useUser()
@@ -52,6 +57,11 @@ export default function DashboardPage() {
   const [pairingFont, setPairingFont] = useState<LocalFont | null>(null)
   const [similarFont, setSimilarFont] = useState<LocalFont | null>(null)
   const [showShare, setShowShare] = useState(false)
+  const [showFontMixer, setShowFontMixer] = useState(false)
+  const [showMonogram, setShowMonogram] = useState(false)
+  const [crafterMockupFont, setCrafterMockupFont] = useState<LocalFont | null>(null)
+  const [showMoodFinder, setShowMoodFinder] = useState(false)
+  const [weddingFont, setWeddingFont] = useState<LocalFont | null>(null)
 
   // Compare
   const [compareList, setCompareList] = useState<LocalFont[]>([])
@@ -219,6 +229,39 @@ export default function DashboardPage() {
                 >
                   {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                   Share with Client
+                </button>
+                <button
+                  onClick={() => isPro ? setShowFontMixer(true) : (window.location.href = '/pricing')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition flex items-center gap-1.5 ${
+                    isPro
+                      ? 'border-pink-600/50 text-pink-400 hover:bg-pink-600/10'
+                      : 'border-zinc-700 text-zinc-500'
+                  }`}
+                >
+                  {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                  Font Mixer
+                </button>
+                <button
+                  onClick={() => isPro ? setShowMonogram(true) : (window.location.href = '/pricing')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition flex items-center gap-1.5 ${
+                    isPro
+                      ? 'border-amber-600/50 text-amber-400 hover:bg-amber-600/10'
+                      : 'border-zinc-700 text-zinc-500'
+                  }`}
+                >
+                  {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                  Monogram
+                </button>
+                <button
+                  onClick={() => isPro ? setShowMoodFinder(true) : (window.location.href = '/pricing')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition flex items-center gap-1.5 ${
+                    isPro
+                      ? 'border-fuchsia-600/50 text-fuchsia-400 hover:bg-fuchsia-600/10'
+                      : 'border-zinc-700 text-zinc-500'
+                  }`}
+                >
+                  {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                  Font Moods
                 </button>
               <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
                 {(['list', 'grid', 'waterfall', 'paragraph'] as const).map(mode => (
@@ -394,6 +437,28 @@ export default function DashboardPage() {
                         {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Similar
                       </button>
+                      <button
+                        onClick={() => isPro ? setCrafterMockupFont(font) : (window.location.href = '/pricing')}
+                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                          isPro
+                            ? 'border-pink-700/50 text-pink-400 hover:bg-pink-600/10'
+                            : 'border-zinc-700/50 text-zinc-600 hover:border-pink-700/50 hover:text-pink-400'
+                        }`}
+                      >
+                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        Crafts
+                      </button>
+                      <button
+                        onClick={() => isPro ? setWeddingFont(font) : (window.location.href = '/pricing')}
+                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                          isPro
+                            ? 'border-rose-700/50 text-rose-400 hover:bg-rose-600/10'
+                            : 'border-zinc-700/50 text-zinc-600 hover:border-rose-700/50 hover:text-rose-400'
+                        }`}
+                      >
+                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        Wedding
+                      </button>
                     </div>
                   </div>
                   )
@@ -486,6 +551,54 @@ export default function DashboardPage() {
           isOpen={showShare}
           onClose={() => setShowShare(false)}
           allFonts={allFonts.map(f => f.family)}
+        />
+      )}
+
+      {/* Font Mixer */}
+      {showFontMixer && isPro && (
+        <FontMixer
+          fonts={allFonts}
+          onClose={() => setShowFontMixer(false)}
+          isPro={isPro}
+          fontSource={fontSource}
+          loadGoogleFont={fontSource === 'google' ? loadGoogleFont : undefined}
+        />
+      )}
+
+      {/* Monogram Builder */}
+      {showMonogram && isPro && (
+        <MonogramBuilder
+          fonts={allFonts}
+          onClose={() => setShowMonogram(false)}
+          fontSource={fontSource}
+          loadGoogleFont={fontSource === 'google' ? loadGoogleFont : undefined}
+        />
+      )}
+
+      {/* Crafter Mockups */}
+      {crafterMockupFont && isPro && (
+        <CrafterMockups
+          fontFamily={crafterMockupFont.family}
+          onClose={() => setCrafterMockupFont(null)}
+        />
+      )}
+
+      {/* Font Mood Finder */}
+      {showMoodFinder && isPro && (
+        <FontMoodFinder
+          fonts={allFonts}
+          onClose={() => setShowMoodFinder(false)}
+          onSelectFont={(font) => setSearch(font.family)}
+          fontSource={fontSource}
+          loadGoogleFont={fontSource === 'google' ? loadGoogleFont : undefined}
+        />
+      )}
+
+      {/* Wedding Templates */}
+      {weddingFont && isPro && (
+        <WeddingTemplates
+          fontFamily={weddingFont.family}
+          onClose={() => setWeddingFont(null)}
         />
       )}
 

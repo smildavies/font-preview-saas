@@ -48,9 +48,63 @@ export default function DashboardPage() {
     familyId: `google-${i}`,
   }))
 
-  const allFonts = fontSource === 'local' ? localFonts : googleFontsAsLocal
+  // Uploaded custom fonts (loaded via drag-drop or file picker)
+  const [uploadedFonts, setUploadedFonts] = useState<LocalFont[]>([])
+  const [uploadingCount, setUploadingCount] = useState(0)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFontFiles = useCallback(async (files: FileList | File[]) => {
+    const fontFiles = Array.from(files).filter(f =>
+      /\.(ttf|otf|woff|woff2)$/i.test(f.name)
+    )
+    if (fontFiles.length === 0) return
+
+    setUploadingCount(fontFiles.length)
+    const newFonts: LocalFont[] = []
+
+    for (const file of fontFiles) {
+      try {
+        const arrayBuffer = await file.arrayBuffer()
+        const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')
+        const fontId = `uploaded-${fontName}-${Date.now()}`
+
+        // Check if already loaded
+        const alreadyExists = uploadedFonts.some(f => f.family === fontName) ||
+                              localFonts.some(f => f.family === fontName)
+        if (alreadyExists) continue
+
+        // Register the font face in the browser
+        const face = new FontFace(fontName, arrayBuffer)
+        const loaded = await face.load()
+        document.fonts.add(loaded)
+
+        newFonts.push({
+          family: fontName,
+          fullName: fontName,
+          postscriptName: fontName.replace(/\s/g, '-'),
+          style: 'Regular',
+          familyId: fontId,
+        })
+      } catch {
+        // Skip broken font files silently
+      }
+    }
+
+    if (newFonts.length > 0) {
+      setUploadedFonts(prev => [...prev, ...newFonts])
+      setToast(`Loaded ${newFonts.length} font${newFonts.length > 1 ? 's' : ''}`)
+      setTimeout(() => setToast(''), 2000)
+    }
+    setUploadingCount(0)
+  }, [uploadedFonts, localFonts])
+
+  // Merge local/uploaded fonts when on local tab
+  const combinedLocalFonts = [...localFonts, ...uploadedFonts]
+    .sort((a, b) => a.family.localeCompare(b.family))
+
+  const allFonts = fontSource === 'local' ? combinedLocalFonts : googleFontsAsLocal
   const loading = fontSource === 'local' ? localLoading : googleLoading
-  const totalCount = fontSource === 'local' ? localTotal : googleTotal
+  const totalCount = fontSource === 'local' ? combinedLocalFonts.length : googleTotal
 
   // Preview settings
   const [text, setText] = useState('Hello World')
@@ -266,6 +320,7 @@ export default function DashboardPage() {
               </span>
             </button>
             {fontSource === 'local' && (
+              <>
               <button
                 onClick={() => refreshLocalFonts()}
                 className="ml-1 px-2 py-1.5 text-xs text-zinc-500 hover:text-violet-400 transition"
@@ -275,6 +330,25 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
                 </svg>
               </button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="ml-1 px-3 py-1.5 text-xs font-medium text-violet-400 hover:text-violet-300 border border-violet-600/30 rounded-lg hover:bg-violet-600/10 transition flex items-center gap-1.5"
+                title="Upload .ttf, .otf, .woff font files"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                Upload Fonts
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".ttf,.otf,.woff,.woff2"
+                multiple
+                className="hidden"
+                onChange={(e) => e.target.files && handleFontFiles(e.target.files)}
+              />
+              </>
             )}
             <button
               onClick={() => setFontSource('google')}
@@ -373,7 +447,24 @@ export default function DashboardPage() {
       </div>
 
       {/* Font Grid */}
-      <div className="p-6">
+      <div
+        className="p-6"
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
+        onDrop={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (e.dataTransfer.files.length > 0) {
+            handleFontFiles(e.dataTransfer.files)
+            setFontSource('local')
+          }
+        }}
+      >
+        {uploadingCount > 0 && (
+          <div className="mb-4 p-3 rounded-xl border border-violet-600/30 bg-violet-600/5 flex items-center gap-3">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
+            <p className="text-sm text-zinc-300">Loading {uploadingCount} font file{uploadingCount > 1 ? 's' : ''}...</p>
+          </div>
+        )}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />

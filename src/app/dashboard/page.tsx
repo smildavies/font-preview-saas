@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useUser } from '@/hooks/useUser'
 import { useLocalFonts, type LocalFont } from '@/hooks/useLocalFonts'
 import { useGoogleFonts } from '@/hooks/useGoogleFonts'
+import { useRecentFonts } from '@/hooks/useRecentFonts'
+import { classifyFont, CLASS_LABELS, type FontClass } from '@/lib/fontClassify'
 import Controls from '@/components/Controls'
 import GlyphModal from '@/components/GlyphModal'
 import MockupModal from '@/components/MockupModal'
@@ -13,17 +15,29 @@ import ShareModal from '@/components/ShareModal'
 import BrowserBanner from '@/components/BrowserBanner'
 import FontMixer from '@/components/FontMixer'
 import MonogramBuilder from '@/components/MonogramBuilder'
-import CrafterMockups from '@/components/CrafterMockups'
 import FontMoodFinder from '@/components/FontMoodFinder'
 import WeddingTemplates from '@/components/WeddingTemplates'
+import VariableAxesEditor from '@/components/VariableAxesEditor'
+import KeyboardShortcuts from '@/components/KeyboardShortcuts'
+import ThemeToggle from '@/components/ThemeToggle'
+import ContrastChecker from '@/components/ContrastChecker'
+import CSSGenerator from '@/components/CSSGenerator'
+import FontCollections from '@/components/FontCollections'
+import RecentFontsRow from '@/components/RecentFontsRow'
 
 export default function DashboardPage() {
   const { isPro } = useUser()
   const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal } = useLocalFonts()
   const { fonts: googleFontsList, loading: googleLoading, loadFont: loadGoogleFont, totalCount: googleTotal } = useGoogleFonts()
 
-  // Font source tab
+  // Font source tab — default to Google Fonts on browsers without local font access (Safari, Firefox, iPad)
   const [fontSource, setFontSource] = useState<'local' | 'google'>('local')
+
+  useEffect(() => {
+    if (!('queryLocalFonts' in window)) {
+      setFontSource('google')
+    }
+  }, [])
 
   // Convert Google fonts to LocalFont shape for unified rendering
   const googleFontsAsLocal: LocalFont[] = googleFontsList.map((gf, i) => ({
@@ -40,7 +54,7 @@ export default function DashboardPage() {
 
   // Preview settings
   const [text, setText] = useState('Hello World')
-  const [fontSize, setFontSize] = useState(42)
+  const [fontSize, setFontSize] = useState(64)
   const [letterSpacing, setLetterSpacing] = useState(0)
   const [lineHeight, setLineHeight] = useState(1.3)
   const [textColor, setTextColor] = useState('#e8e8e8')
@@ -50,6 +64,7 @@ export default function DashboardPage() {
   const [italic, setItalic] = useState(false)
   const [uppercase, setUppercase] = useState(false)
   const [underline, setUnderline] = useState(false)
+  const [textAlign, setTextAlign] = useState('center')
 
   // Modals
   const [glyphFont, setGlyphFont] = useState<LocalFont | null>(null)
@@ -59,22 +74,60 @@ export default function DashboardPage() {
   const [showShare, setShowShare] = useState(false)
   const [showFontMixer, setShowFontMixer] = useState(false)
   const [showMonogram, setShowMonogram] = useState(false)
-  const [crafterMockupFont, setCrafterMockupFont] = useState<LocalFont | null>(null)
   const [showMoodFinder, setShowMoodFinder] = useState(false)
   const [weddingFont, setWeddingFont] = useState<LocalFont | null>(null)
+  const [cssGenFont, setCssGenFont] = useState<string | null>(null)
+  const [showCollections, setShowCollections] = useState(false)
+  const [variableFont, setVariableFont] = useState<LocalFont | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Category filter
+  const [fontCategory, setFontCategory] = useState<string>('all')
+
+  // Favorites
+  const [favorites, setFavorites] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('font-preview-favorites')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    }
+    return new Set()
+  })
+
+  const toggleFavorite = useCallback((fontFamily: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev)
+      if (next.has(fontFamily)) next.delete(fontFamily)
+      else next.add(fontFamily)
+      localStorage.setItem('font-preview-favorites', JSON.stringify([...next]))
+      return next
+    })
+  }, [])
+
+  // Recent fonts
+  const { recentNames, addRecent } = useRecentFonts()
 
   // Compare
   const [compareList, setCompareList] = useState<LocalFont[]>([])
 
   // View mode
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'waterfall' | 'paragraph'>('list')
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
 
   // Toast
   const [toast, setToast] = useState('')
 
-  const filteredFonts = allFonts.filter(f =>
-    !search || f.family.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredFonts = allFonts.filter(f => {
+    if (search) {
+      if (search.includes('|')) {
+        const terms = search.split('|').map(s => s.trim().toLowerCase()).filter(Boolean)
+        if (!terms.some(term => f.family.toLowerCase().includes(term))) return false
+      } else if (!f.family.toLowerCase().includes(search.toLowerCase())) {
+        return false
+      }
+    }
+    if (fontCategory === 'favorites') return favorites.has(f.family)
+    if (fontCategory !== 'all') return classifyFont(f.family) === fontCategory
+    return true
+  })
 
   const handleCompare = (font: LocalFont) => {
     if (compareList.find(c => c.familyId === font.familyId)) return
@@ -130,6 +183,25 @@ export default function DashboardPage() {
     setTimeout(() => setToast(''), 2000)
   }
 
+  const addToCollection = useCallback((fontFamily: string) => {
+    const saved = localStorage.getItem('fontCollections')
+    const collections = saved ? JSON.parse(saved) : []
+    if (collections.length === 0) {
+      setShowCollections(true)
+      return
+    }
+    // Add to the first collection if exists
+    const updated = collections.map((c: { id: string; fonts: string[] }, i: number) => {
+      if (i === 0 && !c.fonts.includes(fontFamily)) {
+        return { ...c, fonts: [...c.fonts, fontFamily] }
+      }
+      return c
+    })
+    localStorage.setItem('fontCollections', JSON.stringify(updated))
+    setToast(`Added ${fontFamily} to "${collections[0].name}"`)
+    setTimeout(() => setToast(''), 2000)
+  }, [])
+
   const previewText = uppercase ? (text || 'Hello World').toUpperCase() : (text || 'Hello World')
 
   // Load Google fonts as they scroll into view
@@ -156,37 +228,49 @@ export default function DashboardPage() {
 
       {/* Font Source Tabs */}
       <div className="border-b border-zinc-800 bg-zinc-950">
-        <div className="flex items-center gap-0 px-6">
-          <button
-            onClick={() => setFontSource('local')}
-            className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
-              fontSource === 'local'
-                ? 'border-violet-500 text-violet-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            My Fonts
-            <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-              {localTotal}
-            </span>
-          </button>
-          <button
-            onClick={() => setFontSource('google')}
-            className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
-              fontSource === 'google'
-                ? 'border-violet-500 text-violet-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            Google Fonts
-            <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-              {googleTotal || '1,500+'}
-            </span>
-          </button>
+        <div className="flex items-center justify-between px-6">
+          <div className="flex items-center gap-0">
+            <button
+              onClick={() => setFontSource('local')}
+              className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
+                fontSource === 'local'
+                  ? 'border-violet-500 text-violet-400'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              My Fonts
+              <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                {localTotal}
+              </span>
+            </button>
+            <button
+              onClick={() => setFontSource('google')}
+              className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
+                fontSource === 'google'
+                  ? 'border-violet-500 text-violet-400'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              Google Fonts
+              <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                {googleTotal || '1,500+'}
+              </span>
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setShowCollections(true)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition flex items-center gap-1.5"
+            >
+              Collections
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Controls */}
+      <div className="px-4 sm:px-6">
       <Controls
         text={text} setText={setText}
         fontSize={fontSize} setFontSize={setFontSize}
@@ -199,8 +283,61 @@ export default function DashboardPage() {
         italic={italic} setItalic={setItalic}
         uppercase={uppercase} setUppercase={setUppercase}
         underline={underline} setUnderline={setUnderline}
+        textAlign={textAlign} setTextAlign={setTextAlign}
         isPro={isPro}
+        searchInputRef={searchInputRef}
       />
+      </div>
+
+      {/* Contrast Checker */}
+      <div className="px-6 py-2">
+        <ContrastChecker textColor={textColor} bgColor={bgColor} />
+      </div>
+
+      {/* Category Filter Bar */}
+      <div className="px-6 py-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setFontCategory('all')}
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-full border transition ${
+              fontCategory === 'all'
+                ? 'bg-violet-600 border-violet-500 text-white'
+                : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+            }`}
+          >
+            All
+          </button>
+          {(Object.entries(CLASS_LABELS) as [FontClass, string][]).map(([cls, label]) => (
+            <button
+              key={cls}
+              onClick={() => setFontCategory(cls)}
+              className={`px-3.5 py-1.5 text-xs font-medium rounded-full border transition ${
+                fontCategory === cls
+                  ? 'bg-violet-600 border-violet-500 text-white'
+                  : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+          <button
+            onClick={() => setFontCategory('favorites')}
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-full border transition flex items-center gap-1 ${
+              fontCategory === 'favorites'
+                ? 'bg-amber-600 border-amber-500 text-white'
+                : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+            }`}
+          >
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            Favorites ({favorites.size})
+          </button>
+        </div>
+      </div>
+
+      {/* Recent Fonts */}
+      <div className="px-6">
+        <RecentFontsRow recentNames={recentNames} onSelect={(name) => setSearch(name)} />
+      </div>
 
       {/* Font Grid */}
       <div className="p-6">
@@ -264,7 +401,7 @@ export default function DashboardPage() {
                   Font Moods
                 </button>
               <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
-                {(['list', 'grid', 'waterfall', 'paragraph'] as const).map(mode => (
+                {(['list', 'grid'] as const).map(mode => (
                   <button
                     key={mode}
                     onClick={() => setViewMode(mode)}
@@ -287,7 +424,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className={`grid gap-3 ${
-                viewMode === 'grid' ? 'grid-cols-1 lg:grid-cols-2' :
+                viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2' :
                 'grid-cols-1'
               }`}>
                 {filteredFonts.map((font, fontIndex) => {
@@ -301,19 +438,42 @@ export default function DashboardPage() {
                     className="group rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden hover:border-violet-600/50 transition-all"
                   >
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 border-b border-zinc-800">
-                      <button
-                        onClick={() => copyToClipboard(font.family, font.family)}
-                        className="text-sm font-semibold text-violet-400 hover:text-violet-300 transition"
-                        title="Click to copy font name"
-                      >
-                        {font.family}
-                        <span className="ml-2 text-xs text-zinc-600 opacity-0 group-hover:opacity-100 transition">
-                          click to copy
+                    <div className="flex items-center justify-between px-3 py-2 bg-zinc-900/80 border-b border-zinc-800" style={{ fontFamily: 'Tahoma, Geneva, sans-serif' }}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        {/* Favorite Star */}
+                        <button
+                          onClick={() => toggleFavorite(font.family)}
+                          className={`shrink-0 transition ${favorites.has(font.family) ? 'text-amber-400' : 'text-zinc-700 hover:text-amber-400/60'}`}
+                          title={favorites.has(font.family) ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        </button>
+                        <button
+                          onClick={() => { addRecent(font.family); copyToClipboard(font.family, font.family) }}
+                          className="truncate text-sm font-semibold text-violet-400 hover:text-violet-300 transition"
+                          title="Click to copy font name"
+                        >
+                          {font.family}
+                          <span className="ml-2 text-xs text-zinc-600 opacity-0 group-hover:opacity-100 transition">
+                            click to copy
+                          </span>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] shrink-0">
+                        {/* Category badge */}
+                        <span className="px-1.5 py-0.5 rounded bg-violet-900/30 text-violet-400 font-medium">
+                          {CLASS_LABELS[classifyFont(font.family) as FontClass] || font.style}
                         </span>
-                      </button>
-                      <div className="flex items-center gap-3 text-xs text-zinc-500">
-                        <span>{font.style}</span>
+                        {/* Info tooltip */}
+                        <span className="relative group/info cursor-help text-zinc-600 hover:text-zinc-400">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+                          <span className="absolute right-0 top-full mt-1 z-50 hidden group-hover/info:block w-48 p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 shadow-xl">
+                            <div className="font-medium text-violet-400 mb-1">{font.family}</div>
+                            <div>Style: {classifyFont(font.family)}</div>
+                            <div>Source: {fontSource === 'google' ? 'Google Fonts' : 'Local'}</div>
+                            {font.style && <div>Category: {font.style}</div>}
+                          </span>
+                        </span>
                         {isLocked && (
                           <span className="text-violet-400 flex items-center gap-1">
                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>
@@ -325,7 +485,7 @@ export default function DashboardPage() {
 
                     {/* Preview */}
                     {isLocked ? (
-                      <div className="relative px-4 py-5 min-h-[60px]" style={{ background: bgColor }}>
+                      <div className="relative px-4 py-5 min-h-[90px]" style={{ background: bgColor }}>
                         <div className="blur-md select-none pointer-events-none" style={{
                           fontFamily: `"${font.family}", sans-serif`,
                           fontSize: `${fontSize}px`,
@@ -342,9 +502,7 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                     <div
-                      className={`px-4 min-h-[60px] ${
-                        viewMode === 'paragraph' ? 'py-6 min-h-[140px] whitespace-pre-wrap' :
-                        viewMode === 'waterfall' ? 'py-2' :
+                      className={`px-4 min-h-[90px] max-h-[200px] overflow-hidden flex items-center justify-center ${
                         'py-5'
                       }`}
                       style={{
@@ -357,107 +515,115 @@ export default function DashboardPage() {
                         fontWeight: bold ? 'bold' : 'normal',
                         fontStyle: italic ? 'italic' : 'normal',
                         textDecoration: underline ? 'underline' : 'none',
+                        textAlign: textAlign as 'left' | 'center' | 'right',
                       }}
                     >
                       {previewText}
                     </div>
                     )}
 
-                    {/* Actions */}
-                    <div className="flex gap-2 px-4 py-2 border-t border-zinc-800 justify-end">
+                    {/* Actions — compact buttons with flex-wrap to match desktop */}
+                    <div className="flex flex-wrap gap-1 px-3 py-1.5 border-t border-zinc-800 justify-end" style={{ fontFamily: 'Tahoma, Geneva, sans-serif' }}>
                       <button
-                        onClick={() => copyToClipboard(`font-family: "${font.family}", sans-serif;`, `${font.family} CSS`)}
-                        className="px-3 py-1 text-xs border border-zinc-700 rounded-md text-zinc-400 hover:text-white hover:border-zinc-500 transition"
+                        onClick={() => setCssGenFont(font.family)}
+                        className="px-2 py-0.5 text-[10px] border border-zinc-700 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition whitespace-nowrap"
                       >
                         Copy CSS
                       </button>
                       <button
+                        onClick={() => addToCollection(font.family)}
+                        className="px-2 py-0.5 text-[10px] border border-zinc-700 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition whitespace-nowrap"
+                        title="Add to collection"
+                      >
+                        + Collection
+                      </button>
+                      <button
                         onClick={() => isPro ? setGlyphFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Glyphs
                       </button>
                       <button
                         onClick={() => isPro ? handleCompare(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Compare
                       </button>
                       <button
                         onClick={() => isPro ? handleExportPNG(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Export PNG
                       </button>
                       <button
                         onClick={() => isPro ? setMockupFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Mockups
                       </button>
                       <button
                         onClick={() => isPro ? setPairingFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Pairings
                       </button>
                       <button
                         onClick={() => isPro ? setSimilarFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Similar
                       </button>
                       <button
-                        onClick={() => isPro ? setCrafterMockupFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
-                          isPro
-                            ? 'border-pink-700/50 text-pink-400 hover:bg-pink-600/10'
-                            : 'border-zinc-700/50 text-zinc-600 hover:border-pink-700/50 hover:text-pink-400'
-                        }`}
-                      >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Crafts
-                      </button>
-                      <button
                         onClick={() => isPro ? setWeddingFont(font) : (window.location.href = '/pricing')}
-                        className={`px-3 py-1 text-xs border rounded-md transition flex items-center gap-1 ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
                             ? 'border-rose-700/50 text-rose-400 hover:bg-rose-600/10'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-rose-700/50 hover:text-rose-400'
                         }`}
                       >
-                        {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Wedding
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        Invitations
+                      </button>
+                      <button
+                        onClick={() => isPro ? setVariableFont(font) : (window.location.href = '/pricing')}
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
+                          isPro
+                            ? 'border-cyan-700/50 text-cyan-400 hover:bg-cyan-600/10'
+                            : 'border-zinc-700/50 text-zinc-600 hover:border-cyan-700/50 hover:text-cyan-400'
+                        }`}
+                      >
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        Variable
                       </button>
                     </div>
                   </div>
@@ -471,13 +637,15 @@ export default function DashboardPage() {
 
       {/* Compare Panel */}
       {compareList.length > 0 && isPro && (
-        <div className="sticky bottom-0 z-50 border-t-2 border-violet-600 bg-zinc-950 p-5">
+        <div className="fixed bottom-0 left-0 right-0 z-[100] border-t-2 border-violet-600 bg-zinc-950 p-5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] max-h-[40vh] overflow-y-auto">
           <h3 className="text-sm font-semibold text-zinc-300 mb-3">
             Compare ({compareList.length})
           </h3>
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {compareList.map(font => (
-              <div key={font.familyId} className="flex-shrink-0 min-w-[250px] bg-zinc-900 border border-zinc-800 rounded-lg p-3 relative">
+            {compareList.map(font => {
+              if (fontSource === 'google') loadGoogleFont(font.family)
+              return (
+              <div key={font.familyId} className="flex-shrink-0 min-w-[250px] border border-zinc-800 rounded-lg p-3 relative" style={{ backgroundColor: bgColor }}>
                 <button
                   onClick={() => setCompareList(prev => prev.filter(f => f.familyId !== font.familyId))}
                   className="absolute top-1 right-1 w-5 h-5 rounded-full bg-pink-500/20 text-pink-400 text-xs flex items-center justify-center hover:bg-pink-500/40"
@@ -498,7 +666,8 @@ export default function DashboardPage() {
                   {previewText}
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}
@@ -531,6 +700,7 @@ export default function DashboardPage() {
           fontFamily={pairingFont.family}
           fontName={pairingFont.family}
           allFonts={allFonts.map(f => f.family)}
+          loadGoogleFont={fontSource === 'google' ? loadGoogleFont : undefined}
         />
       )}
 
@@ -542,6 +712,7 @@ export default function DashboardPage() {
           fontFamily={similarFont.family}
           fontName={similarFont.family}
           allFonts={allFonts.map(f => f.family)}
+          loadGoogleFont={fontSource === 'google' ? loadGoogleFont : undefined}
         />
       )}
 
@@ -575,14 +746,6 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Crafter Mockups */}
-      {crafterMockupFont && isPro && (
-        <CrafterMockups
-          fontFamily={crafterMockupFont.family}
-          onClose={() => setCrafterMockupFont(null)}
-        />
-      )}
-
       {/* Font Mood Finder */}
       {showMoodFinder && isPro && (
         <FontMoodFinder
@@ -598,9 +761,43 @@ export default function DashboardPage() {
       {weddingFont && isPro && (
         <WeddingTemplates
           fontFamily={weddingFont.family}
+          allFonts={allFonts}
+          googleFonts={googleFontsAsLocal}
+          loadGoogleFont={loadGoogleFont}
           onClose={() => setWeddingFont(null)}
         />
       )}
+
+      {/* Variable Axes Editor */}
+      {variableFont && isPro && (
+        <VariableAxesEditor
+          fontFamily={variableFont.family}
+          onClose={() => setVariableFont(null)}
+        />
+      )}
+
+      {/* CSS Generator Modal */}
+      {cssGenFont && <CSSGenerator fontFamily={cssGenFont} onClose={() => setCssGenFont(null)} />}
+
+      {/* Font Collections Modal */}
+      {showCollections && (
+        <FontCollections
+          onClose={() => setShowCollections(false)}
+          onSelectCollection={(fonts) => {
+            setShowCollections(false)
+            setSearch(fonts.join('|'))
+          }}
+        />
+      )}
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardShortcuts
+        onSearch={() => searchInputRef.current?.focus()}
+        onViewChange={(v) => setViewMode(v as 'list' | 'grid')}
+        onOpenMixer={() => setShowFontMixer(true)}
+        onOpenMonogram={() => setShowMonogram(true)}
+        onOpenPairing={() => { if (filteredFonts[0]) setPairingFont(filteredFonts[0]) }}
+      />
 
       {/* Toast */}
       {toast && (

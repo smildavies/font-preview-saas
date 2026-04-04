@@ -9,6 +9,7 @@ interface SimilarFontsPanelProps {
   fontFamily: string;
   fontName: string;
   allFonts: string[];
+  loadGoogleFont?: (family: string) => void;
 }
 
 export default function SimilarFontsPanel({
@@ -17,6 +18,7 @@ export default function SimilarFontsPanel({
   fontFamily,
   fontName,
   allFonts,
+  loadGoogleFont,
 }: SimilarFontsPanelProps) {
   const [results, setResults] = useState<SimilarResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,13 @@ export default function SimilarFontsPanel({
       setResults([]);
     }
   }, [isOpen, fontFamily, allFonts]);
+
+  // Load Google Fonts for results
+  useEffect(() => {
+    if (loadGoogleFont && results.length > 0) {
+      results.forEach((r) => loadGoogleFont(r.font));
+    }
+  }, [results, loadGoogleFont]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);

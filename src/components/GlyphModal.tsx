@@ -41,7 +41,7 @@ export default function GlyphModal({
   const [selectedGlyphs, setSelectedGlyphs] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
 
-  const fontFamily = `font-${fontFamilyId}`;
+  const fontFamily = fontFamilyId;
 
   useEffect(() => {
     if (!isOpen) {
@@ -185,7 +185,7 @@ export default function GlyphModal({
 
         {/* Glyph grid */}
         <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="grid grid-cols-8 gap-1.5 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-14">
+          <div className="grid grid-cols-8 gap-1.5 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-[repeat(14,minmax(0,1fr))]">
             {filteredGlyphs.map((g) => (
               <button
                 key={g.code}

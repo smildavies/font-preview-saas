@@ -39,9 +39,9 @@ export default function ShareModal({ isOpen, onClose, allFonts }: ShareModalProp
   }, [isOpen, onClose])
 
   const filteredFonts = useMemo(() => {
-    if (!search.trim()) return allFonts.slice(0, 50)
+    if (!search.trim()) return allFonts
     const q = search.toLowerCase()
-    return allFonts.filter(f => f.toLowerCase().includes(q)).slice(0, 50)
+    return allFonts.filter(f => f.toLowerCase().includes(q))
   }, [allFonts, search])
 
   const addFont = (font: string) => {

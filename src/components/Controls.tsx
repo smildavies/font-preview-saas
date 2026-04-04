@@ -44,7 +44,10 @@ interface ControlsProps {
   setUppercase: (v: boolean) => void;
   underline: boolean;
   setUnderline: (v: boolean) => void;
+  textAlign: string;
+  setTextAlign: (v: string) => void;
   isPro: boolean;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 function LockIcon({ className = 'h-3 w-3' }: { className?: string }) {
@@ -82,7 +85,10 @@ export default function Controls({
   setUppercase,
   underline,
   setUnderline,
+  textAlign,
+  setTextAlign,
   isPro,
+  searchInputRef,
 }: ControlsProps) {
   const [sampleKey, setSampleKey] = useState('Custom');
 
@@ -122,9 +128,9 @@ export default function Controls({
   };
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-xl bg-zinc-900/60 border border-zinc-800 p-4">
+    <div className="flex flex-wrap items-end gap-3 rounded-xl bg-zinc-900/60 border border-zinc-800 p-3 sm:p-4">
       {/* Preview text input */}
-      <div className="flex flex-col gap-1 min-w-[200px] flex-1">
+      <div className="flex flex-col gap-1 min-w-[140px] sm:min-w-[200px] flex-1">
         <label className="text-xs text-zinc-500">Preview Text</label>
         <input
           type="text"
@@ -155,7 +161,7 @@ export default function Controls({
       </div>
 
       {/* Search fonts */}
-      <div className="flex flex-col gap-1 min-w-[160px]">
+      <div className="flex flex-col gap-1 min-w-[120px] sm:min-w-[160px] flex-1 sm:flex-none">
         <label className="text-xs text-zinc-500">Search Fonts</label>
         <div className="relative">
           <svg
@@ -172,6 +178,7 @@ export default function Controls({
             />
           </svg>
           <input
+            ref={searchInputRef}
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -291,6 +298,40 @@ export default function Controls({
           {toggleButton('I', italic, () => setItalic(!italic), true)}
           {toggleButton('AA', uppercase, () => setUppercase(!uppercase), true)}
           {toggleButton('U', underline, () => setUnderline(!underline), true)}
+        </div>
+      </div>
+
+      {/* Text alignment */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs text-zinc-500">Align</label>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setTextAlign('left')}
+            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
+              textAlign === 'left' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+            }`}
+            title="Align Left"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+          </button>
+          <button
+            onClick={() => setTextAlign('center')}
+            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
+              textAlign === 'center' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+            }`}
+            title="Align Center"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </button>
+          <button
+            onClick={() => setTextAlign('right')}
+            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
+              textAlign === 'right' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+            }`}
+            title="Align Right"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
+          </button>
         </div>
       </div>
     </div>

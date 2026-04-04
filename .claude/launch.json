@@ -6,7 +6,8 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["next", "dev"],
       "port": 3000,
-      "cwd": "/Users/trenisedavies-bell/Desktop/font-preview-saas"
+      "cwd": "/Users/trenisedavies-bell/Desktop/font-preview-saas",
+      "autoPort": true
     }
   ]
 }

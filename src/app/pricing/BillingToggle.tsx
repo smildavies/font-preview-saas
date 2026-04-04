@@ -36,7 +36,6 @@ const features: Feature[] = [
   { name: "Export previews as PNG", free: false, pro: true },
   { name: "Bold / italic / uppercase / underline", free: false, pro: true },
   { name: "Custom background colors", free: false, pro: true },
-  { name: "Paragraph & waterfall views", free: false, pro: true },
 ];
 
 const freeFeatures = features.filter((f) => f.free);

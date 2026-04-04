@@ -16,6 +16,28 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [signupSuccess, setSignupSuccess] = useState(false)
+
+  async function handleReset() {
+    if (!email) {
+      setError('Enter your email address first')
+      return
+    }
+    setError(null)
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/dashboard`,
+      })
+      if (error) throw error
+      setResetSent(true)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,11 +52,19 @@ export default function LoginPage() {
         })
         if (error) throw error
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         })
         if (error) throw error
+        // If email confirmation is required, user won't have a session yet
+        if (!data.session) {
+          setResetSent(false)
+          setError(null)
+          setSignupSuccess(true)
+          setLoading(false)
+          return
+        }
       }
       router.push('/dashboard')
     } catch (err: unknown) {
@@ -109,6 +139,30 @@ export default function LoginPage() {
               className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-colors"
             />
           </div>
+
+          {tab === 'signin' && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
+
+          {resetSent && (
+            <div className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-400">
+              Password reset email sent! Check your inbox.
+            </div>
+          )}
+
+          {signupSuccess && (
+            <div className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-400">
+              Account created! Check your email for a confirmation link, then come back and sign in.
+            </div>
+          )}
 
           {error && (
             <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { type LocalFont } from '@/hooks/useLocalFonts'
 
 interface FontMoodFinderProps {
@@ -90,17 +90,39 @@ const MOODS: MoodCategory[] = [
 export default function FontMoodFinder({ fonts, onClose, onSelectFont, fontSource, loadGoogleFont }: FontMoodFinderProps) {
   const [selectedMood, setSelectedMood] = useState<number | null>(null)
   const [previewText, setPreviewText] = useState('The quick brown fox')
+  const [fontSearch, setFontSearch] = useState('')
+  const fontGridRef = useRef<HTMLDivElement>(null)
 
   const getMatchingFonts = (mood: MoodCategory): LocalFont[] => {
     return fonts.filter(f => {
       const name = f.family.toLowerCase()
       const style = (f.style || '').toLowerCase()
       return mood.keywords.some(kw => name.includes(kw) || style.includes(kw))
-    }).slice(0, 24)
+    })
   }
 
   const mood = selectedMood !== null ? MOODS[selectedMood] : null
-  const matchingFonts = mood ? getMatchingFonts(mood) : []
+  const allMatchingFonts = mood ? getMatchingFonts(mood) : []
+  const matchingFonts = fontSearch
+    ? allMatchingFonts.filter(f => f.family.toLowerCase().includes(fontSearch.toLowerCase()))
+    : allMatchingFonts
+
+  // Lazy-load Google Fonts as they appear in the results grid
+  useEffect(() => {
+    if (fontSource !== 'google' || !loadGoogleFont || !fontGridRef.current) return
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const family = entry.target.getAttribute('data-font-family')
+          if (family) loadGoogleFont(family)
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { root: fontGridRef.current, rootMargin: '100px' })
+
+    fontGridRef.current.querySelectorAll('[data-font-family]').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [fontSource, loadGoogleFont, matchingFonts])
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -148,7 +170,7 @@ export default function FontMoodFinder({ fonts, onClose, onSelectFont, fontSourc
           {/* Results */}
           {mood && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <h3 className={`text-lg font-bold ${mood.color}`}>
                     {mood.emoji} {mood.name} Fonts
@@ -157,13 +179,20 @@ export default function FontMoodFinder({ fonts, onClose, onSelectFont, fontSourc
                     {matchingFonts.length} font{matchingFonts.length !== 1 ? 's' : ''} found from your collection
                   </p>
                 </div>
-                <div className="w-64">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={fontSearch}
+                    onChange={e => setFontSearch(e.target.value)}
+                    placeholder="Search fonts..."
+                    className="w-48 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:border-violet-600 focus:outline-none"
+                  />
                   <input
                     type="text"
                     value={previewText}
                     onChange={e => setPreviewText(e.target.value)}
                     placeholder="Preview text..."
-                    className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:border-violet-600 focus:outline-none"
+                    className="w-48 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:border-violet-600 focus:outline-none"
                   />
                 </div>
               </div>
@@ -174,10 +203,11 @@ export default function FontMoodFinder({ fonts, onClose, onSelectFont, fontSourc
                   <p className="text-xs mt-1">Try switching to Google Fonts for more options.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div ref={fontGridRef} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {matchingFonts.map(font => (
                     <button
                       key={font.familyId}
+                      data-font-family={fontSource === 'google' ? font.family : undefined}
                       onClick={() => {
                         if (fontSource === 'google' && loadGoogleFont) loadGoogleFont(font.family)
                         onSelectFont(font)
@@ -186,7 +216,7 @@ export default function FontMoodFinder({ fonts, onClose, onSelectFont, fontSourc
                       className="text-left rounded-xl border border-zinc-800 bg-zinc-900 p-4 hover:border-violet-600/50 transition-all group"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-violet-400">{font.family}</span>
+                        <span className="text-xs font-medium text-violet-400" style={{ fontFamily: `"${font.family}", sans-serif` }}>{font.family}</span>
                         <span className="text-[10px] text-zinc-600 group-hover:text-zinc-400 transition">Click to use</span>
                       </div>
                       <p

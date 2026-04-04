@@ -8,8 +8,6 @@ export type GoogleFont = {
   variants: string[]
 }
 
-const GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ-20'
-
 export function useGoogleFonts(enabled: boolean = true) {
   const [fonts, setFonts] = useState<GoogleFont[]>([])
   const [loading, setLoading] = useState(false)
@@ -19,7 +17,7 @@ export function useGoogleFonts(enabled: boolean = true) {
     if (!enabled) return
     setLoading(true)
     try {
-      const resp = await fetch(GOOGLE_FONTS_API)
+      const resp = await fetch('/api/fonts/google')
       const data = await resp.json()
       if (data.items) {
         setFonts(data.items.map((f: { family: string; category: string; variants: string[] }) => ({

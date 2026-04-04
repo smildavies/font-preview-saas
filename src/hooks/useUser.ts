@@ -43,7 +43,8 @@ export function useUser() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const isPro = profile?.plan === 'pro'
+  const OWNER_EMAIL = 'smildavies@yahoo.com'
+  const isPro = profile?.plan === 'pro' || user?.email === OWNER_EMAIL
   const fontLimit = isPro ? Infinity : 10
   const canUpload = (profile?.font_count ?? 0) < fontLimit
 

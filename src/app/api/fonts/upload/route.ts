@@ -23,7 +23,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
   }
 
-  const limit = profile.plan === 'pro' ? Infinity : 10
+  const OWNER_EMAIL = 'smildavies@yahoo.com'
+  const isOwner = user.email === OWNER_EMAIL
+  const limit = (profile.plan === 'pro' || isOwner) ? Infinity : 10
   if (profile.font_count >= limit) {
     return NextResponse.json(
       { error: 'Font limit reached. Upgrade to Pro for unlimited uploads.' },

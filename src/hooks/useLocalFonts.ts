@@ -268,46 +268,10 @@ export function useLocalFonts() {
   const [fonts, setFonts] = useState<LocalFont[]>([])
   const [loading, setLoading] = useState(true)
   const [method, setMethod] = useState<'api' | 'canvas' | 'none'>('none')
+  const [apiAttempted, setApiAttempted] = useState(false)
 
-  const detectFonts = useCallback(async () => {
-    setLoading(true)
-
-    // Method 1: Local Font Access API (Chrome/Edge only)
-    if ('queryLocalFonts' in window) {
-      try {
-        // @ts-expect-error - queryLocalFonts is not in all TS definitions yet
-        const fontData = await window.queryLocalFonts()
-
-        if (fontData.length > 0) {
-          const seen = new Set<string>()
-          const results: LocalFont[] = []
-
-          for (const font of fontData) {
-            if (!seen.has(font.family)) {
-              seen.add(font.family)
-              results.push({
-                family: font.family,
-                fullName: font.fullName,
-                postscriptName: font.postscriptName,
-                style: font.style || 'Regular',
-                familyId: `local-${results.length}`,
-              })
-            }
-          }
-
-          results.sort((a, b) => a.family.localeCompare(b.family))
-          setFonts(results)
-          setMethod('api')
-          setLoading(false)
-          return
-        }
-        // API returned 0 fonts (permission denied silently) — fall through to canvas
-      } catch {
-        // User denied permission or API failed — fall through to canvas
-      }
-    }
-
-    // Method 2: Canvas-based detection (all browsers, or when API permission denied)
+  // Canvas-only detection (no permission needed, runs on mount)
+  const detectCanvasFonts = useCallback(() => {
     const detected = detectFontsCanvas()
     const results: LocalFont[] = detected.map((name, i) => ({
       family: name,
@@ -316,15 +280,101 @@ export function useLocalFonts() {
       style: 'Regular',
       familyId: `local-${i}`,
     }))
-
-    setFonts(results)
-    setMethod('canvas')
-    setLoading(false)
+    return results
   }, [])
 
-  useEffect(() => {
-    detectFonts()
-  }, [detectFonts])
+  // Full detection with Local Font Access API (requires user gesture for permission prompt)
+  const requestFullAccess = useCallback(async () => {
+    if (!('queryLocalFonts' in window)) return false
 
-  return { fonts, loading, method, refresh: detectFonts, totalCount: fonts.length }
+    setLoading(true)
+    try {
+      // @ts-expect-error - queryLocalFonts is not in all TS definitions yet
+      const fontData = await window.queryLocalFonts()
+      setApiAttempted(true)
+
+      if (fontData.length > 0) {
+        const seen = new Set<string>()
+        const results: LocalFont[] = []
+
+        for (const font of fontData) {
+          if (!seen.has(font.family)) {
+            seen.add(font.family)
+            results.push({
+              family: font.family,
+              fullName: font.fullName,
+              postscriptName: font.postscriptName,
+              style: font.style || 'Regular',
+              familyId: `local-${results.length}`,
+            })
+          }
+        }
+
+        results.sort((a, b) => a.family.localeCompare(b.family))
+        setFonts(results)
+        setMethod('api')
+        setLoading(false)
+        return true
+      }
+    } catch {
+      setApiAttempted(true)
+    }
+    setLoading(false)
+    return false
+  }, [])
+
+  // On mount: try API first, fall back to canvas
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // Try the API (works if permission was already granted)
+      if ('queryLocalFonts' in window) {
+        try {
+          // @ts-expect-error
+          const fontData = await window.queryLocalFonts()
+          if (!cancelled && fontData.length > 0) {
+            const seen = new Set<string>()
+            const results: LocalFont[] = []
+            for (const font of fontData) {
+              if (!seen.has(font.family)) {
+                seen.add(font.family)
+                results.push({
+                  family: font.family,
+                  fullName: font.fullName,
+                  postscriptName: font.postscriptName,
+                  style: font.style || 'Regular',
+                  familyId: `local-${results.length}`,
+                })
+              }
+            }
+            results.sort((a, b) => a.family.localeCompare(b.family))
+            setFonts(results)
+            setMethod('api')
+            setLoading(false)
+            return
+          }
+        } catch {
+          // Permission not yet granted — fall through
+        }
+      }
+
+      // Fallback: canvas detection
+      if (!cancelled) {
+        const results = detectCanvasFonts()
+        setFonts(results)
+        setMethod('canvas')
+        setLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [detectCanvasFonts])
+
+  return {
+    fonts,
+    loading,
+    method,
+    apiAttempted,
+    refresh: requestFullAccess,
+    totalCount: fonts.length,
+  }
 }

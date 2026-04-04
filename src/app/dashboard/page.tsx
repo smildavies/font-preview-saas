@@ -27,7 +27,7 @@ import RecentFontsRow from '@/components/RecentFontsRow'
 
 export default function DashboardPage() {
   const { isPro } = useUser()
-  const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal, refresh: refreshLocalFonts } = useLocalFonts()
+  const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal, refresh: refreshLocalFonts, apiAttempted } = useLocalFonts()
   const { fonts: googleFontsList, loading: googleLoading, loadFont: loadGoogleFont, totalCount: googleTotal } = useGoogleFonts()
 
   // Font source tab — default to Google Fonts on browsers without local font access (Safari, Firefox, iPad)
@@ -247,7 +247,13 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-0">
             <button
-              onClick={() => setFontSource('local')}
+              onClick={() => {
+                setFontSource('local')
+                // Request full Font Book access on user click (requires user gesture)
+                if (method === 'canvas' && 'queryLocalFonts' in window) {
+                  refreshLocalFonts()
+                }
+              }}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
                 fontSource === 'local'
                   ? 'border-violet-500 text-violet-400'
@@ -456,31 +462,53 @@ export default function DashboardPage() {
 
             {filteredFonts.length === 0 ? (
               <div className="text-center py-20">
-                {fontSource === 'local' && totalCount === 0 ? (
+                {fontSource === 'local' && method === 'canvas' && 'queryLocalFonts' in window ? (
                   <div className="max-w-md mx-auto space-y-4">
-                    <svg className="w-12 h-12 mx-auto text-zinc-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <svg className="w-12 h-12 mx-auto text-violet-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
                     </svg>
-                    <p className="text-zinc-400 font-medium">No local fonts detected</p>
+                    <p className="text-zinc-300 font-medium">See all your Font Book fonts</p>
                     <p className="text-zinc-500 text-sm">
-                      {'queryLocalFonts' in window
-                        ? 'Chrome needs permission to read your Font Book. Click below, then select "Allow" when prompted. If you previously denied access, click the lock/tune icon in the address bar → Site Settings → change "Fonts" to "Allow" → refresh.'
-                        : 'Your browser doesn\'t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your Font Book fonts.'}
+                      {apiAttempted
+                        ? 'Font access was denied. Click the lock/tune icon in the address bar → "Site settings" → change "Fonts" to "Allow" → then refresh this page.'
+                        : 'Click below to grant Chrome access to read all your installed fonts from Font Book. You\'ll see a permission popup — click "Allow".'}
                     </p>
-                    {'queryLocalFonts' in window && (
+                    {!apiAttempted && (
                       <button
                         onClick={() => refreshLocalFonts()}
                         className="px-5 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition"
                       >
-                        Grant Font Access
+                        Load All Font Book Fonts
                       </button>
                     )}
+                  </div>
+                ) : fontSource === 'local' && totalCount === 0 ? (
+                  <div className="max-w-md mx-auto space-y-4">
+                    <p className="text-zinc-400 font-medium">No local fonts detected</p>
+                    <p className="text-zinc-500 text-sm">
+                      Your browser doesn&apos;t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your Font Book fonts.
+                    </p>
                   </div>
                 ) : (
                   <p className="text-zinc-500">No fonts match &quot;{search}&quot;</p>
                 )}
               </div>
             ) : (
+              <>
+              {/* Banner: prompt to unlock full Font Book access when on canvas fallback */}
+              {fontSource === 'local' && method === 'canvas' && 'queryLocalFonts' in window && (
+                <div className="mb-4 p-3 rounded-xl border border-violet-600/30 bg-violet-600/5 flex items-center justify-between gap-3">
+                  <p className="text-sm text-zinc-300">
+                    Showing {totalCount} common fonts. <span className="text-violet-400 font-medium">Grant access to see all your Font Book fonts.</span>
+                  </p>
+                  <button
+                    onClick={() => refreshLocalFonts()}
+                    className="shrink-0 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium transition"
+                  >
+                    Load All Fonts
+                  </button>
+                </div>
+              )}
               <div className={`grid gap-3 ${
                 viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2' :
                 'grid-cols-1'
@@ -688,6 +716,7 @@ export default function DashboardPage() {
                   )
                 })}
               </div>
+              </>
             )}
           </>
         )}

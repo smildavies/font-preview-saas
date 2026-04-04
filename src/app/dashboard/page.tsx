@@ -112,6 +112,18 @@ export default function DashboardPage() {
   // View mode
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
 
+  // Sort
+  const [sortBy, setSortBy] = useState<'az' | 'za' | 'popular'>('az')
+
+  // Scroll to top
+  const [showScrollTop, setShowScrollTop] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 600)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   // Toast
   const [toast, setToast] = useState('')
 
@@ -127,6 +139,10 @@ export default function DashboardPage() {
     if (fontCategory === 'favorites') return favorites.has(f.family)
     if (fontCategory !== 'all') return classifyFont(f.family) === fontCategory
     return true
+  }).sort((a, b) => {
+    if (sortBy === 'za') return b.family.localeCompare(a.family)
+    if (sortBy === 'popular') return 0 // keep original order (Google Fonts = by popularity)
+    return a.family.localeCompare(b.family) // 'az'
   })
 
   const handleCompare = (font: LocalFont) => {
@@ -400,6 +416,15 @@ export default function DashboardPage() {
                   {!isPro && <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                   Font Moods
                 </button>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'az' | 'za' | 'popular')}
+                className="px-2 py-1.5 text-xs font-medium rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-white hover:border-zinc-500 transition cursor-pointer focus:outline-none focus:border-violet-500"
+              >
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+                <option value="popular">Default Order</option>
+              </select>
               <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
                 {(['list', 'grid'] as const).map(mode => (
                   <button
@@ -804,6 +829,19 @@ export default function DashboardPage() {
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-violet-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-lg z-[999] animate-pulse">
           {toast}
         </div>
+      )}
+
+      {/* Scroll to Top */}
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-[100] w-10 h-10 rounded-full bg-violet-600 hover:bg-violet-700 text-white shadow-lg flex items-center justify-center transition-all"
+          title="Back to top"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+          </svg>
+        </button>
       )}
     </div>
   )

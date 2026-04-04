@@ -27,7 +27,7 @@ import RecentFontsRow from '@/components/RecentFontsRow'
 
 export default function DashboardPage() {
   const { isPro } = useUser()
-  const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal } = useLocalFonts()
+  const { fonts: localFonts, loading: localLoading, method, totalCount: localTotal, refresh: refreshLocalFonts } = useLocalFonts()
   const { fonts: googleFontsList, loading: googleLoading, loadFont: loadGoogleFont, totalCount: googleTotal } = useGoogleFonts()
 
   // Font source tab — default to Google Fonts on browsers without local font access (Safari, Firefox, iPad)
@@ -259,6 +259,17 @@ export default function DashboardPage() {
                 {localTotal}
               </span>
             </button>
+            {fontSource === 'local' && (
+              <button
+                onClick={() => refreshLocalFonts()}
+                className="ml-1 px-2 py-1.5 text-xs text-zinc-500 hover:text-violet-400 transition"
+                title="Rescan installed fonts"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+                </svg>
+              </button>
+            )}
             <button
               onClick={() => setFontSource('google')}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
@@ -445,7 +456,29 @@ export default function DashboardPage() {
 
             {filteredFonts.length === 0 ? (
               <div className="text-center py-20">
-                <p className="text-zinc-500">No fonts match &quot;{search}&quot;</p>
+                {fontSource === 'local' && totalCount === 0 ? (
+                  <div className="max-w-md mx-auto space-y-4">
+                    <svg className="w-12 h-12 mx-auto text-zinc-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+                    </svg>
+                    <p className="text-zinc-400 font-medium">No local fonts detected</p>
+                    <p className="text-zinc-500 text-sm">
+                      {'queryLocalFonts' in window
+                        ? 'Click the button below to grant font access permission. Your browser will ask to read your installed fonts.'
+                        : 'Your browser doesn\'t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your Font Book fonts.'}
+                    </p>
+                    {'queryLocalFonts' in window && (
+                      <button
+                        onClick={() => refreshLocalFonts()}
+                        className="px-5 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition"
+                      >
+                        Grant Font Access
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-zinc-500">No fonts match &quot;{search}&quot;</p>
+                )}
               </div>
             ) : (
               <div className={`grid gap-3 ${

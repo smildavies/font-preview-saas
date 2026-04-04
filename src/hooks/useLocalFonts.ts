@@ -277,33 +277,37 @@ export function useLocalFonts() {
       try {
         // @ts-expect-error - queryLocalFonts is not in all TS definitions yet
         const fontData = await window.queryLocalFonts()
-        const seen = new Set<string>()
-        const results: LocalFont[] = []
 
-        for (const font of fontData) {
-          if (!seen.has(font.family)) {
-            seen.add(font.family)
-            results.push({
-              family: font.family,
-              fullName: font.fullName,
-              postscriptName: font.postscriptName,
-              style: font.style || 'Regular',
-              familyId: `local-${results.length}`,
-            })
+        if (fontData.length > 0) {
+          const seen = new Set<string>()
+          const results: LocalFont[] = []
+
+          for (const font of fontData) {
+            if (!seen.has(font.family)) {
+              seen.add(font.family)
+              results.push({
+                family: font.family,
+                fullName: font.fullName,
+                postscriptName: font.postscriptName,
+                style: font.style || 'Regular',
+                familyId: `local-${results.length}`,
+              })
+            }
           }
-        }
 
-        results.sort((a, b) => a.family.localeCompare(b.family))
-        setFonts(results)
-        setMethod('api')
-        setLoading(false)
-        return
+          results.sort((a, b) => a.family.localeCompare(b.family))
+          setFonts(results)
+          setMethod('api')
+          setLoading(false)
+          return
+        }
+        // API returned 0 fonts (permission denied silently) — fall through to canvas
       } catch {
-        // User denied permission or API failed, fall through to canvas
+        // User denied permission or API failed — fall through to canvas
       }
     }
 
-    // Method 2: Canvas-based detection (all browsers)
+    // Method 2: Canvas-based detection (all browsers, or when API permission denied)
     const detected = detectFontsCanvas()
     const results: LocalFont[] = detected.map((name, i) => ({
       family: name,

@@ -464,7 +464,7 @@ export default function DashboardPage() {
                     <p className="text-zinc-400 font-medium">No local fonts detected</p>
                     <p className="text-zinc-500 text-sm">
                       {'queryLocalFonts' in window
-                        ? 'Click the button below to grant font access permission. Your browser will ask to read your installed fonts.'
+                        ? 'Chrome needs permission to read your Font Book. Click below, then select "Allow" when prompted. If you previously denied access, click the lock/tune icon in the address bar → Site Settings → change "Fonts" to "Allow" → refresh.'
                         : 'Your browser doesn\'t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your Font Book fonts.'}
                     </p>
                     {'queryLocalFonts' in window && (

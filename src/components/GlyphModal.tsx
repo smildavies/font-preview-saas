@@ -16,18 +16,14 @@ interface GlyphRange {
 }
 
 const GLYPH_RANGES: GlyphRange[] = [
-  { label: 'Basic Latin', start: 0x0020, end: 0x007f },
-  { label: 'Latin-1 Supplement', start: 0x00a0, end: 0x00ff },
-  { label: 'Latin Extended-A', start: 0x0100, end: 0x017f },
-  { label: 'Latin Extended-B', start: 0x0180, end: 0x024f },
-  { label: 'Punctuation', start: 0x2000, end: 0x206f },
-  { label: 'Currency Symbols', start: 0x20a0, end: 0x20cf },
-  { label: 'Letterlike Symbols', start: 0x2100, end: 0x214f },
-  { label: 'Arrows', start: 0x2190, end: 0x21ff },
-  { label: 'Math Operators', start: 0x2200, end: 0x22ff },
+  { label: 'Basic Latin (A-Z, 0-9)', start: 0x0020, end: 0x007f },
+  { label: 'Extended Latin', start: 0x0080, end: 0x024f },
+  { label: 'Punctuation & Symbols', start: 0x2000, end: 0x20cf },
+  { label: 'Math Symbols', start: 0x2200, end: 0x22ff },
+  { label: 'Arrows & Misc', start: 0x2190, end: 0x21ff },
+  { label: 'Dingbats & Ornaments', start: 0x2700, end: 0x27bf },
   { label: 'Box Drawing', start: 0x2500, end: 0x257f },
   { label: 'Geometric Shapes', start: 0x25a0, end: 0x25ff },
-  { label: 'Dingbats', start: 0x2700, end: 0x27bf },
 ];
 
 export default function GlyphModal({

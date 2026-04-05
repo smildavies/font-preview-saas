@@ -162,6 +162,8 @@ export default function DashboardPage() {
 
   // Compare
   const [compareList, setCompareList] = useState<LocalFont[]>([])
+  const [compareSplit, setCompareSplit] = useState(false)
+  const [compareSplitText, setCompareSplitText] = useState('The quick brown fox jumps over the lazy dog')
 
   // View mode
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
@@ -783,9 +785,61 @@ export default function DashboardPage() {
       {/* Compare Panel */}
       {compareList.length > 0 && isPro && (
         <div className="fixed bottom-0 left-0 right-0 z-[100] border-t-2 border-violet-600 bg-zinc-950 p-5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] max-h-[40vh] overflow-y-auto">
-          <h3 className="text-sm font-semibold text-zinc-300 mb-3">
-            Compare ({compareList.length})
-          </h3>
+          <div className="flex items-center gap-3 mb-3">
+            <h3 className="text-sm font-semibold text-zinc-300">
+              Compare ({compareList.length})
+            </h3>
+            <button
+              onClick={() => setCompareSplit(prev => !prev)}
+              className={`px-2 py-1 text-[10px] rounded border transition ${
+                compareSplit
+                  ? 'bg-violet-600/20 border-violet-500/40 text-violet-400'
+                  : 'border-zinc-700 text-zinc-400 hover:border-zinc-500'
+              }`}
+            >
+              Split Screen View
+            </button>
+          </div>
+          {compareSplit ? (
+            <div>
+              <input
+                type="text"
+                value={compareSplitText}
+                onChange={e => setCompareSplitText(e.target.value)}
+                placeholder="Type to compare..."
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-violet-600 focus:outline-none mb-3"
+              />
+              <div className="grid gap-0" style={{ gridTemplateColumns: `repeat(${compareList.length}, 1fr)` }}>
+                {compareList.map(font => {
+                  if (fontSource === 'google') loadGoogleFont(font.family)
+                  return (
+                  <div key={font.familyId} className="border border-zinc-800 p-3 relative" style={{ backgroundColor: bgColor }}>
+                    <button
+                      onClick={() => setCompareList(prev => prev.filter(f => f.familyId !== font.familyId))}
+                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-pink-500/20 text-pink-400 text-xs flex items-center justify-center hover:bg-pink-500/40"
+                    >
+                      &times;
+                    </button>
+                    <div className="text-xs text-violet-400 mb-1" style={{ fontFamily: 'Tahoma, sans-serif' }}>{font.family}</div>
+                    <div style={{
+                      fontFamily: `"${font.family}", sans-serif`,
+                      fontSize: `${fontSize}px`,
+                      letterSpacing: `${letterSpacing}px`,
+                      lineHeight: lineHeight,
+                      color: textColor,
+                      fontWeight: bold ? 'bold' : 'normal',
+                      fontStyle: italic ? 'italic' : 'normal',
+                      textDecoration: underline ? 'underline' : 'none',
+                      wordBreak: 'break-word' as const,
+                    }}>
+                      {compareSplitText || previewText}
+                    </div>
+                  </div>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
           <div className="flex gap-4 overflow-x-auto pb-2">
             {compareList.map(font => {
               if (fontSource === 'google') loadGoogleFont(font.family)
@@ -814,6 +868,7 @@ export default function DashboardPage() {
               )
             })}
           </div>
+          )}
         </div>
       )}
 

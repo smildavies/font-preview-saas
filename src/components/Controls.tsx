@@ -5,20 +5,24 @@ import { useState } from 'react';
 const SAMPLE_TEXTS: Record<string, string> = {
   Custom: '',
   Pangram: 'The quick brown fox jumps over the lazy dog',
-  Alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-  Numbers: '0123456789 !@#$%^&*()_+-=[]{}|;:,.<>?',
+  'Pangram 2': 'Pack my box with five dozen liquor jugs',
+  'Pangram 3': 'How vexingly quick daft zebras jump',
+  'Pangram 4': 'Sphinx of black quartz, judge my vow',
+  Alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz',
+  'Numbers & Symbols': '0123456789 !@#$%^&*()_+-=[]{}|;:,.<>?',
   'Lorem Ipsum':
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 };
 
 const BG_PRESETS_FREE = [
-  { label: 'Dark', value: '#18181b' },
-  { label: 'Light', value: '#27272a' },
+  { label: 'Dark', value: '#0f0f0f' },
+  { label: 'Light', value: '#f5f5f5' },
+  { label: 'White', value: '#ffffff' },
+  { label: 'Cream', value: '#fef3c7' },
 ];
 
 const BG_PRESETS_PRO = [
-  { label: 'White', value: '#ffffff' },
-  { label: 'Cream', value: '#fef3c7' },
+  { label: 'Navy', value: '#1e1b4b' },
 ];
 
 interface ControlsProps {
@@ -278,15 +282,13 @@ export default function Controls({
               )}
             </button>
           ))}
-          {isPro && (
-            <input
-              type="color"
-              value={bgColor}
-              onChange={(e) => setBgColor(e.target.value)}
-              className="h-7 w-7 cursor-pointer rounded border border-zinc-700 bg-transparent"
-              title="Custom color"
-            />
-          )}
+          <input
+            type="color"
+            value={bgColor}
+            onChange={(e) => setBgColor(e.target.value)}
+            className="h-7 w-7 cursor-pointer rounded border border-zinc-700 bg-transparent"
+            title="Custom color"
+          />
         </div>
       </div>
 
@@ -294,10 +296,10 @@ export default function Controls({
       <div className="flex flex-col gap-1">
         <label className="text-xs text-zinc-500">Style</label>
         <div className="flex items-center gap-1">
-          {toggleButton('B', bold, () => setBold(!bold), true)}
-          {toggleButton('I', italic, () => setItalic(!italic), true)}
-          {toggleButton('AA', uppercase, () => setUppercase(!uppercase), true)}
-          {toggleButton('U', underline, () => setUnderline(!underline), true)}
+          {toggleButton('B', bold, () => setBold(!bold), false)}
+          {toggleButton('I', italic, () => setItalic(!italic), false)}
+          {toggleButton('AA', uppercase, () => setUppercase(!uppercase), false)}
+          {toggleButton('U', underline, () => setUnderline(!underline), false)}
         </div>
       </div>
 

@@ -167,7 +167,7 @@ export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
 
   // Sort
-  const [sortBy, setSortBy] = useState<'az' | 'za' | 'popular'>('az')
+  const [sortBy, setSortBy] = useState<'az' | 'za' | 'category' | 'popular'>('az')
 
   // Scroll to top
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -195,6 +195,12 @@ export default function DashboardPage() {
     return true
   }).sort((a, b) => {
     if (sortBy === 'za') return b.family.localeCompare(a.family)
+    if (sortBy === 'category') {
+      const catA = classifyFont(a.family)
+      const catB = classifyFont(b.family)
+      if (catA !== catB) return catA.localeCompare(catB)
+      return a.family.localeCompare(b.family)
+    }
     if (sortBy === 'popular') return 0 // keep original order (Google Fonts = by popularity)
     return a.family.localeCompare(b.family) // 'az'
   })
@@ -526,11 +532,12 @@ export default function DashboardPage() {
                 </button>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'az' | 'za' | 'popular')}
+                onChange={(e) => setSortBy(e.target.value as 'az' | 'za' | 'category' | 'popular')}
                 className="px-2 py-1.5 text-xs font-medium rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-white hover:border-zinc-500 transition cursor-pointer focus:outline-none focus:border-violet-500"
               >
                 <option value="az">A → Z</option>
                 <option value="za">Z → A</option>
+                <option value="category">Category</option>
                 <option value="popular">Default Order</option>
               </select>
               <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
@@ -708,13 +715,6 @@ export default function DashboardPage() {
                         Copy CSS
                       </button>
                       <button
-                        onClick={() => addToCollection(font.family)}
-                        className="px-2 py-0.5 text-[10px] border border-zinc-700 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition whitespace-nowrap"
-                        title="Add to collection"
-                      >
-                        + Collection
-                      </button>
-                      <button
                         onClick={() => isPro ? setGlyphFont(font) : (window.location.href = '/pricing')}
                         className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
                           isPro
@@ -746,39 +746,6 @@ export default function DashboardPage() {
                       >
                         {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Export PNG
-                      </button>
-                      <button
-                        onClick={() => isPro ? setMockupFont(font) : (window.location.href = '/pricing')}
-                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
-                          isPro
-                            ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
-                            : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
-                        }`}
-                      >
-                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Mockups
-                      </button>
-                      <button
-                        onClick={() => isPro ? setPairingFont(font) : (window.location.href = '/pricing')}
-                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
-                          isPro
-                            ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
-                            : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
-                        }`}
-                      >
-                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Pairings
-                      </button>
-                      <button
-                        onClick={() => isPro ? setSimilarFont(font) : (window.location.href = '/pricing')}
-                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
-                          isPro
-                            ? 'border-violet-700/50 text-violet-400 hover:bg-violet-600/10'
-                            : 'border-zinc-700/50 text-zinc-600 hover:border-violet-700/50 hover:text-violet-400'
-                        }`}
-                      >
-                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Similar
                       </button>
                       <button
                         onClick={() => isPro ? setWeddingFont(font) : (window.location.href = '/pricing')}

@@ -751,9 +751,17 @@ export default function DashboardPage() {
                       <button
                         onClick={() => {
                           if (fontSource === 'google') {
-                            window.open(`https://fonts.google.com/specimen/${encodeURIComponent(font.family)}`, '_blank')
+                            // Direct download from Google Fonts — downloads a zip containing .ttf files
+                            // Opening the zip on macOS auto-extracts and the .ttf can be double-clicked to install in Font Book
+                            const downloadUrl = `https://fonts.google.com/download?family=${encodeURIComponent(font.family)}`
+                            const a = document.createElement('a')
+                            a.href = downloadUrl
+                            a.download = `${font.family}.zip`
+                            a.click()
+                            setToast(`Downloading ${font.family}... Open the zip and double-click the font to install in Font Book`)
+                            setTimeout(() => setToast(''), 4000)
                           } else {
-                            setToast(`${font.fullName} is already installed`)
+                            setToast(`${font.fullName} is already installed in Font Book`)
                             setTimeout(() => setToast(''), 2000)
                           }
                         }}
@@ -763,7 +771,7 @@ export default function DashboardPage() {
                             : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
                         }`}
                       >
-                        {fontSource === 'local' ? 'Installed' : 'Download'}
+                        {fontSource === 'local' ? 'Installed' : 'Install'}
                       </button>
                       <button
                         onClick={() => isPro ? handleExportPNG(font) : (window.location.href = '/pricing')}

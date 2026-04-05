@@ -646,6 +646,16 @@ export default function DashboardPage() {
                         </button>
                       </div>
                       <div className="flex items-center gap-2 text-[10px] shrink-0">
+                        {/* Installed / Source badge */}
+                        {fontSource === 'local' ? (
+                          <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: 'rgba(52,211,153,0.15)', color: '#34d399' }}>
+                            Installed
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>
+                            Not Installed
+                          </span>
+                        )}
                         {/* Category badge */}
                         <span className="px-1.5 py-0.5 rounded bg-violet-900/30 text-violet-400 font-medium">
                           {CLASS_LABELS[classifyFont(font.family) as FontClass] || font.style}
@@ -737,6 +747,23 @@ export default function DashboardPage() {
                       >
                         {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Compare
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (fontSource === 'google') {
+                            window.open(`https://fonts.google.com/specimen/${encodeURIComponent(font.family)}`, '_blank')
+                          } else {
+                            setToast(`${font.fullName} is already installed`)
+                            setTimeout(() => setToast(''), 2000)
+                          }
+                        }}
+                        className={`px-2 py-0.5 text-[10px] border rounded transition whitespace-nowrap ${
+                          fontSource === 'local'
+                            ? 'border-emerald-700/50 text-emerald-400/60 cursor-default'
+                            : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+                        }`}
+                      >
+                        {fontSource === 'local' ? 'Installed' : 'Download'}
                       </button>
                       <button
                         onClick={() => isPro ? handleExportPNG(font) : (window.location.href = '/pricing')}

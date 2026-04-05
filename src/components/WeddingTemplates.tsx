@@ -12,6 +12,7 @@ interface WeddingTemplatesProps {
 
 interface WeddingSnapshot {
   selectedTemplate: number
+  category: string
   namesFont: string
   detailsFont: string
   customFields: Record<string, string>
@@ -186,12 +187,12 @@ const TEMPLATES: Template[] = [
     name: 'Cocktail Menu', category: 'menu',
     fields: [
       { label: 'Header', defaultValue: 'COCKTAILS', fontSize: 14, letterSpacing: '0.5em', fontWeight: 'bold', role: 'name' },
-      { label: 'Drink 1', defaultValue: 'Lavender Fizz', fontSize: 13, role: 'name' },
-      { label: 'Desc 1', defaultValue: 'Gin, lavender syrup, lemon, prosecco', fontSize: 10, opacity: 0.5, role: 'detail' },
-      { label: 'Drink 2', defaultValue: 'Sunset Boulevard', fontSize: 13, role: 'name' },
-      { label: 'Desc 2', defaultValue: 'Tequila, blood orange, agave, chili rim', fontSize: 10, opacity: 0.5, role: 'detail' },
-      { label: 'Drink 3', defaultValue: 'Garden Party', fontSize: 13, role: 'name' },
-      { label: 'Desc 3', defaultValue: 'Vodka, cucumber, elderflower, mint', fontSize: 10, opacity: 0.5, role: 'detail' },
+      { label: 'Drink 1 Name', defaultValue: 'Lavender Fizz', fontSize: 13, role: 'name' },
+      { label: 'Drink 1 Desc', defaultValue: 'Gin, lavender syrup, lemon, prosecco', fontSize: 10, opacity: 0.5, role: 'detail' },
+      { label: 'Drink 2 Name', defaultValue: 'Sunset Boulevard', fontSize: 13, role: 'name' },
+      { label: 'Drink 2 Desc', defaultValue: 'Tequila, blood orange, agave, chili rim', fontSize: 10, opacity: 0.5, role: 'detail' },
+      { label: 'Drink 3 Name', defaultValue: 'Garden Party', fontSize: 13, role: 'name' },
+      { label: 'Drink 3 Desc', defaultValue: 'Vodka, cucumber, elderflower, mint', fontSize: 10, opacity: 0.5, role: 'detail' },
     ],
     bg: 'linear-gradient(180deg, #1a1a2e 0%, #0f172a 100%)', textColor: '#e2e8f0', accentColor: '#94a3b8',
     border: '1px solid rgba(148,163,184,0.2)', radius: '0', decoType: 'line', cardSize: { w: 4, h: 9 },
@@ -271,18 +272,14 @@ const CATEGORIES = [
 ]
 
 const COLOR_SCHEMES = [
-  { name: 'Ivory Gold', bg: 'linear-gradient(180deg, #fef9f0, #fdf6e9)', text: '#3d2c1e', accent: '#c9a96e' },
-  { name: 'Pure White', bg: 'linear-gradient(180deg, #ffffff, #fafafa)', text: '#111111', accent: '#999999' },
-  { name: 'Midnight', bg: 'linear-gradient(135deg, #2d3436, #1a1a2e)', text: '#f5f0e8', accent: '#c9a96e' },
-  { name: 'Blush', bg: 'linear-gradient(180deg, #fdf2f8, #fff1f2)', text: '#4a1942', accent: '#be185d' },
-  { name: 'Sage', bg: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', text: '#064e3b', accent: '#34d399' },
-  { name: 'Navy Gold', bg: 'linear-gradient(180deg, #1a1a2e, #16213e)', text: '#d4af37', accent: '#d4af37' },
-  { name: 'Dusty Rose', bg: 'linear-gradient(180deg, #fff1f2, #ffe4e6)', text: '#881337', accent: '#e11d48' },
-  { name: 'Ocean', bg: 'linear-gradient(135deg, #0c4a6e, #164e63)', text: '#e0f2fe', accent: '#38bdf8' },
-  { name: 'Lavender', bg: 'linear-gradient(180deg, #f5f3ff, #ede9fe)', text: '#3b0764', accent: '#8b5cf6' },
-  { name: 'Champagne', bg: 'linear-gradient(180deg, #fffbeb, #fef3c7)', text: '#451a03', accent: '#d97706' },
-  { name: 'Moody Dark', bg: 'linear-gradient(180deg, #18181b, #09090b)', text: '#fafafa', accent: '#a1a1aa' },
-  { name: 'Terracotta', bg: 'linear-gradient(180deg, #fef2f2, #fee2e2)', text: '#7f1d1d', accent: '#dc2626' },
+  { name: 'Ivory & Gold', bg: '#FFFFF0', text: '#2C2C2C', accent: '#D4AF37' },
+  { name: 'Blush & Rose', bg: '#FFF0F0', text: '#3D2B2B', accent: '#C48B8B' },
+  { name: 'Sage & Green', bg: '#F0F5F0', text: '#2D3A2E', accent: '#5A7A5E' },
+  { name: 'Navy & Gold', bg: '#0A1628', text: '#E8E0D0', accent: '#D4AF37' },
+  { name: 'Modern White', bg: '#FFFFFF', text: '#111111', accent: '#333333' },
+  { name: 'Dusty Lavender', bg: '#F5F0F8', text: '#2D2640', accent: '#8B7AAE' },
+  { name: 'Moody Dark', bg: '#1A1A2E', text: '#E8E0D0', accent: '#C9A96E' },
+  { name: 'Champagne', bg: '#FAF5EF', text: '#3D3028', accent: '#B89B72' },
 ]
 
 const DECO_STYLES = [
@@ -719,12 +716,12 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
   const [undoRedoTick, setUndoRedoTick] = useState(0) // trigger re-render for button states
 
   const takeSnapshot = useCallback((): WeddingSnapshot => ({
-    selectedTemplate, namesFont, detailsFont,
+    selectedTemplate, category, namesFont, detailsFont,
     customFields: { ...customFields },
     colorSchemeIdx, useCustomColor,
     customBgColor, customTextColor, customAccentColor,
     decoStyleIdx,
-  }), [selectedTemplate, namesFont, detailsFont, customFields, colorSchemeIdx, useCustomColor, customBgColor, customTextColor, customAccentColor, decoStyleIdx])
+  }), [selectedTemplate, category, namesFont, detailsFont, customFields, colorSchemeIdx, useCustomColor, customBgColor, customTextColor, customAccentColor, decoStyleIdx])
 
   const saveSnapshot = useCallback(() => {
     const snap = takeSnapshot()
@@ -735,6 +732,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
 
   const restoreSnapshot = useCallback((snap: WeddingSnapshot) => {
     setSelectedTemplate(snap.selectedTemplate)
+    setCategory(snap.category)
     setNamesFont(snap.namesFont)
     setDetailsFont(snap.detailsFont)
     setCustomFields(snap.customFields)
@@ -860,6 +858,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
     setNamesFont(fontFamily)
     setDetailsFont(fontFamily)
     setUseCustomColor(false)
+    setPairingKey(k => k + 1)
   }
 
   const [pageSize, setPageSize] = useState('single')
@@ -1127,7 +1126,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
       if (seen.has(f.family)) return false
       seen.add(f.family)
       return true
-    }).slice(0, 100)
+    })
   }, [filteredPickerFonts])
 
   return (
@@ -1186,7 +1185,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => { setCategory(cat.id); setSelectedTemplate(0) }}
+                  onClick={() => { saveSnapshot(); setCategory(cat.id); setSelectedTemplate(0) }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
                     category === cat.id
                       ? 'bg-gradient-to-r from-rose-500/15 to-amber-500/15 text-rose-400 border border-rose-500/40'
@@ -1255,7 +1254,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                                           letterSpacing: field.letterSpacing || 'normal',
                                           color: textColor,
                                           opacity: field.opacity || 1,
-                                          lineHeight: 1.4,
+                                          lineHeight: 1.5,
                                         }}
                                       >
                                         {getFieldValue(field.label, field.defaultValue)}
@@ -1345,7 +1344,10 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                       </div>
-                      <label className="text-[10px] font-bold uppercase tracking-[1.5px] text-violet-400">AI Font Pairing</label>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-[1.5px] text-violet-400">AI Font Pairing</label>
+                        <p className="text-[8px] text-zinc-600 mt-0.5">Curated pairings based on real invitation design</p>
+                      </div>
                     </div>
                     <button
                       onClick={() => setPairingKey(k => k + 1)}
@@ -1358,8 +1360,9 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                   {/* Font picker rows with live previews */}
                   <div className="space-y-2 mb-3">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-400 uppercase tracking-wider">Names</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-400 uppercase tracking-wider w-fit">Names</span>
+                        <span className="text-[8px] text-zinc-600">Headings & couple names</span>
                       </div>
                       <button
                         onClick={() => setFontPickerTarget('names')}
@@ -1373,8 +1376,9 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                       <span className="text-sm text-zinc-300" style={{ fontFamily: `"${namesFont}", serif` }}>Emma & James</span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 uppercase tracking-wider">Details</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 uppercase tracking-wider w-fit">Details</span>
+                        <span className="text-[8px] text-zinc-600">Dates, venues & info</span>
                       </div>
                       <button
                         onClick={() => setFontPickerTarget('details')}
@@ -1454,9 +1458,9 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                     <label className="text-[10px] font-bold uppercase tracking-[1.5px] text-zinc-500">Color Scheme</label>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[9px] text-zinc-600">Custom:</span>
-                      <input type="color" value={customBgColor} onChange={e => { setCustomBgColor(e.target.value); if (useCustomColor) {} }} title="Background" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
-                      <input type="color" value={customTextColor} onChange={e => setCustomTextColor(e.target.value)} title="Text" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
-                      <input type="color" value={customAccentColor} onChange={e => setCustomAccentColor(e.target.value)} title="Accent" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
+                      <input type="color" value={customBgColor} onChange={e => { setCustomBgColor(e.target.value); if (useCustomColor) { setColorSchemeIdx(-1) } }} title="Background" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
+                      <input type="color" value={customTextColor} onChange={e => { setCustomTextColor(e.target.value); if (useCustomColor) { setColorSchemeIdx(-1) } }} title="Text" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
+                      <input type="color" value={customAccentColor} onChange={e => { setCustomAccentColor(e.target.value); if (useCustomColor) { setColorSchemeIdx(-1) } }} title="Accent" className="w-5 h-5 border border-zinc-700 rounded cursor-pointer bg-transparent p-0" />
                       <button
                         onClick={() => { saveSnapshot(); setUseCustomColor(true); setColorSchemeIdx(-1) }}
                         className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition"
@@ -1465,11 +1469,11 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                       </button>
                     </div>
                   </div>
-                  <div className="grid grid-cols-6 gap-1.5">
+                  <div className="grid grid-cols-8 gap-1.5">
                     {COLOR_SCHEMES.map((cs, i) => (
                       <button
                         key={cs.name}
-                        onClick={() => { saveSnapshot(); setColorSchemeIdx(i === colorSchemeIdx ? -1 : i); setUseCustomColor(false) }}
+                        onClick={() => { saveSnapshot(); setColorSchemeIdx(i); setUseCustomColor(false) }}
                         title={cs.name}
                         className={`aspect-square rounded-lg transition ${
                           colorSchemeIdx === i && !useCustomColor ? 'ring-2 ring-violet-500 ring-offset-1 ring-offset-zinc-900' : ''
@@ -1487,7 +1491,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                     {DECO_STYLES.map((ds, i) => (
                       <button
                         key={ds.name}
-                        onClick={() => { saveSnapshot(); setDecoStyleIdx(i === decoStyleIdx ? -1 : i) }}
+                        onClick={() => { saveSnapshot(); setDecoStyleIdx(i) }}
                         className={`px-2 py-1.5 rounded-md text-[10px] transition ${
                           decoStyleIdx === i
                             ? 'bg-violet-600/20 border border-violet-600/40 text-violet-400'
@@ -1504,7 +1508,10 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                 <div className="p-4 border-b border-zinc-800">
                   <label className="block text-[10px] font-bold uppercase tracking-[1.5px] text-zinc-500 mb-2">Customize Text</label>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                    {template.fields.map((field, i) => (
+                    {template.fields.map((field, i) => {
+                      const val = getFieldValue(field.label, field.defaultValue)
+                      const isMultiline = val.includes('\n') || field.defaultValue.includes('\n')
+                      return (
                       <div key={i}>
                         <div className="flex items-center gap-1 mb-0.5">
                           <label className="text-[9px] text-zinc-600">{field.label}</label>
@@ -1514,15 +1521,26 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                             {field.role === 'name' ? 'NAME' : 'DETAIL'}
                           </span>
                         </div>
-                        <input
-                          type="text"
-                          value={getFieldValue(field.label, field.defaultValue)}
-                          onFocus={() => saveSnapshot()}
-                          onChange={e => setFieldValue(field.label, e.target.value)}
-                          className="w-full rounded border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-white focus:border-violet-600 focus:outline-none"
-                        />
+                        {isMultiline ? (
+                          <textarea
+                            rows={val.split('\n').length + 1}
+                            value={val}
+                            onFocus={() => saveSnapshot()}
+                            onChange={e => setFieldValue(field.label, e.target.value)}
+                            className="w-full rounded border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-white focus:border-violet-600 focus:outline-none resize-none"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            value={val}
+                            onFocus={() => saveSnapshot()}
+                            onChange={e => setFieldValue(field.label, e.target.value)}
+                            className="w-full rounded border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-white focus:border-violet-600 focus:outline-none"
+                          />
+                        )}
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -1642,6 +1660,7 @@ export default function WeddingTemplates({ fontFamily, allFonts = [], googleFont
                     else setDetailsFont(f.family)
                     setFontPickerTarget(null)
                     setFontSearch('')
+                    setTimeout(() => setPairingKey(k => k + 1), 150)
                   }}
                   className="text-left px-2 py-1.5 rounded-md bg-zinc-800 border border-zinc-700/50 hover:border-violet-500/50 transition overflow-hidden"
                 >

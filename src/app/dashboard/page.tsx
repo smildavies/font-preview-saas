@@ -233,7 +233,7 @@ export default function DashboardPage() {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = '#a78bfa'
     ctx.font = '20px -apple-system, sans-serif'
-    ctx.fillText(font.family, 40, 40)
+    ctx.fillText(font.fullName, 40, 40)
     ctx.fillStyle = textColor
     const fontSpec = `${italic ? 'italic ' : ''}${bold ? 'bold ' : ''}${fontSize}px "${font.family}", sans-serif`
     ctx.font = fontSpec
@@ -254,10 +254,10 @@ export default function DashboardPage() {
     }
     ctx.fillText(line.trim(), 40, y)
     const link = document.createElement('a')
-    link.download = `${font.family.replace(/[^a-zA-Z0-9]/g, '_')}_preview.png`
+    link.download = `${font.fullName.replace(/[^a-zA-Z0-9]/g, '_')}_preview.png`
     link.href = canvas.toDataURL('image/png')
     link.click()
-    setToast(`Exported ${font.family}`)
+    setToast(`Exported ${font.fullName}`)
     setTimeout(() => setToast(''), 2000)
   }
 
@@ -635,11 +635,11 @@ export default function DashboardPage() {
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         </button>
                         <button
-                          onClick={() => { addRecent(font.family); copyToClipboard(font.family, font.family) }}
+                          onClick={() => { addRecent(font.family); copyToClipboard(font.fullName, font.fullName) }}
                           className="truncate text-sm font-semibold text-violet-400 hover:text-violet-300 transition"
                           title="Click to copy font name"
                         >
-                          {font.family}
+                          {font.fullName}
                           <span className="ml-2 text-xs text-zinc-600 opacity-0 group-hover:opacity-100 transition">
                             click to copy
                           </span>
@@ -654,7 +654,7 @@ export default function DashboardPage() {
                         <span className="relative group/info cursor-help text-zinc-600 hover:text-zinc-400">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
                           <span className="absolute right-0 top-full mt-1 z-50 hidden group-hover/info:block w-48 p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 shadow-xl">
-                            <div className="font-medium text-violet-400 mb-1">{font.family}</div>
+                            <div className="font-medium text-violet-400 mb-1">{font.fullName}</div>
                             <div>Style: {classifyFont(font.family)}</div>
                             <div>Source: {fontSource === 'google' ? 'Google Fonts' : 'Local'}</div>
                             {font.style && <div>Category: {font.style}</div>}
@@ -820,7 +820,7 @@ export default function DashboardPage() {
                     >
                       &times;
                     </button>
-                    <div className="text-xs text-violet-400 mb-1" style={{ fontFamily: 'Tahoma, sans-serif' }}>{font.family}</div>
+                    <div className="text-xs text-violet-400 mb-1" style={{ fontFamily: 'Tahoma, sans-serif' }}>{font.fullName}</div>
                     <div style={{
                       fontFamily: `"${font.family}", sans-serif`,
                       fontSize: `${fontSize}px`,
@@ -851,7 +851,7 @@ export default function DashboardPage() {
                 >
                   &times;
                 </button>
-                <div className="text-xs text-violet-400 mb-1">{font.family}</div>
+                <div className="text-xs text-violet-400 mb-1">{font.fullName}</div>
                 <div style={{
                   fontFamily: `"${font.family}", sans-serif`,
                   fontSize: `${fontSize}px`,

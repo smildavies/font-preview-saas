@@ -294,23 +294,20 @@ export function useLocalFonts() {
       setApiAttempted(true)
 
       if (fontData.length > 0) {
-        const seen = new Set<string>()
         const results: LocalFont[] = []
 
         for (const font of fontData) {
-          if (!seen.has(font.family)) {
-            seen.add(font.family)
-            results.push({
-              family: font.family,
-              fullName: font.fullName,
-              postscriptName: font.postscriptName,
-              style: font.style || 'Regular',
-              familyId: `local-${results.length}`,
-            })
-          }
+          const displayName = font.fullName || `${font.family} ${font.style || ''}`.trim()
+          results.push({
+            family: font.family,
+            fullName: font.fullName,
+            postscriptName: font.postscriptName,
+            style: font.style || 'Regular',
+            familyId: `local-${font.postscriptName || results.length}`,
+          })
         }
 
-        results.sort((a, b) => a.family.localeCompare(b.family))
+        results.sort((a, b) => a.fullName.localeCompare(b.fullName))
         setFonts(results)
         setMethod('api')
         setLoading(false)
@@ -333,21 +330,17 @@ export function useLocalFonts() {
           // @ts-expect-error
           const fontData = await window.queryLocalFonts()
           if (!cancelled && fontData.length > 0) {
-            const seen = new Set<string>()
             const results: LocalFont[] = []
             for (const font of fontData) {
-              if (!seen.has(font.family)) {
-                seen.add(font.family)
-                results.push({
-                  family: font.family,
-                  fullName: font.fullName,
-                  postscriptName: font.postscriptName,
-                  style: font.style || 'Regular',
-                  familyId: `local-${results.length}`,
-                })
-              }
+              results.push({
+                family: font.family,
+                fullName: font.fullName,
+                postscriptName: font.postscriptName,
+                style: font.style || 'Regular',
+                familyId: `local-${font.postscriptName || results.length}`,
+              })
             }
-            results.sort((a, b) => a.family.localeCompare(b.family))
+            results.sort((a, b) => a.fullName.localeCompare(b.fullName))
             setFonts(results)
             setMethod('api')
             setLoading(false)

@@ -17,7 +17,6 @@ import FontMixer from '@/components/FontMixer'
 import MonogramBuilder from '@/components/MonogramBuilder'
 import FontMoodFinder from '@/components/FontMoodFinder'
 import WeddingTemplates from '@/components/WeddingTemplates'
-import VariableAxesEditor from '@/components/VariableAxesEditor'
 import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 import ThemeToggle from '@/components/ThemeToggle'
 import ContrastChecker from '@/components/ContrastChecker'
@@ -132,7 +131,6 @@ export default function DashboardPage() {
   const [weddingFont, setWeddingFont] = useState<LocalFont | null>(null)
   const [cssGenFont, setCssGenFont] = useState<string | null>(null)
   const [showCollections, setShowCollections] = useState(false)
-  const [variableFont, setVariableFont] = useState<LocalFont | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Category filter
@@ -767,10 +765,10 @@ export default function DashboardPage() {
                             setTimeout(() => setToast(''), 2000)
                           }
                         }}
-                        className={`px-2 py-0.5 text-[10px] border rounded transition whitespace-nowrap ${
+                        className={`px-2 py-0.5 text-[10px] border rounded transition whitespace-nowrap font-semibold ${
                           fontSource === 'local'
                             ? 'border-emerald-700/50 text-emerald-400/60 cursor-default'
-                            : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+                            : 'border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/15 hover:border-emerald-500/60'
                         }`}
                       >
                         {fontSource === 'local' ? 'Installed' : 'Install'}
@@ -796,17 +794,6 @@ export default function DashboardPage() {
                       >
                         {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Invitations
-                      </button>
-                      <button
-                        onClick={() => isPro ? setVariableFont(font) : (window.location.href = '/pricing')}
-                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap ${
-                          isPro
-                            ? 'border-cyan-700/50 text-cyan-400 hover:bg-cyan-600/10'
-                            : 'border-zinc-700/50 text-zinc-600 hover:border-cyan-700/50 hover:text-cyan-400'
-                        }`}
-                      >
-                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
-                        Variable
                       </button>
                     </div>
                   </div>
@@ -1002,14 +989,6 @@ export default function DashboardPage() {
           googleFonts={googleFontsAsLocal}
           loadGoogleFont={loadGoogleFont}
           onClose={() => setWeddingFont(null)}
-        />
-      )}
-
-      {/* Variable Axes Editor */}
-      {variableFont && isPro && (
-        <VariableAxesEditor
-          fontFamily={variableFont.family}
-          onClose={() => setVariableFont(null)}
         />
       )}
 

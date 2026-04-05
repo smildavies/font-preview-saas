@@ -332,7 +332,7 @@ export default function DashboardPage() {
               <button
                 onClick={() => refreshLocalFonts()}
                 className="ml-1 px-2 py-1.5 text-xs text-zinc-500 hover:text-violet-400 transition"
-                title="Rescan installed fonts"
+                title="Refresh — rescan your device for newly installed fonts"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
@@ -567,18 +567,18 @@ export default function DashboardPage() {
                     <svg className="w-12 h-12 mx-auto text-violet-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
                     </svg>
-                    <p className="text-zinc-300 font-medium">See all your Font Book fonts</p>
+                    <p className="text-zinc-300 font-medium">See all your installed fonts</p>
                     <p className="text-zinc-500 text-sm">
                       {apiAttempted
                         ? 'Font access was denied. Click the lock/tune icon in the address bar → "Site settings" → change "Fonts" to "Allow" → then refresh this page.'
-                        : 'Click below to grant Chrome access to read all your installed fonts from Font Book. You\'ll see a permission popup — click "Allow".'}
+                        : 'Click below to grant your browser access to read all fonts installed on your device. You\'ll see a permission popup — click "Allow".'}
                     </p>
                     {!apiAttempted && (
                       <button
                         onClick={() => refreshLocalFonts()}
                         className="px-5 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition"
                       >
-                        Load All Font Book Fonts
+                        Load All Installed Fonts
                       </button>
                     )}
                   </div>
@@ -586,7 +586,7 @@ export default function DashboardPage() {
                   <div className="max-w-md mx-auto space-y-4">
                     <p className="text-zinc-400 font-medium">No local fonts detected</p>
                     <p className="text-zinc-500 text-sm">
-                      Your browser doesn&apos;t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your Font Book fonts.
+                      Your browser doesn&apos;t support local font access. Use the Google Fonts tab, or switch to Chrome/Edge to access your installed fonts.
                     </p>
                   </div>
                 ) : (
@@ -599,7 +599,7 @@ export default function DashboardPage() {
               {fontSource === 'local' && method === 'canvas' && 'queryLocalFonts' in window && (
                 <div className="mb-4 p-3 rounded-xl border border-violet-600/30 bg-violet-600/5 flex items-center justify-between gap-3">
                   <p className="text-sm text-zinc-300">
-                    Showing {totalCount} common fonts. <span className="text-violet-400 font-medium">Grant access to see all your Font Book fonts.</span>
+                    Showing {totalCount} common fonts. <span className="text-violet-400 font-medium">Grant access to see all fonts installed on your device.</span>
                   </p>
                   <button
                     onClick={() => refreshLocalFonts()}
@@ -752,16 +752,18 @@ export default function DashboardPage() {
                         onClick={() => {
                           if (fontSource === 'google') {
                             // Direct download from Google Fonts — downloads a zip containing .ttf files
-                            // Opening the zip on macOS auto-extracts and the .ttf can be double-clicked to install in Font Book
+                            // Works on all OS: Mac, Windows, Linux — user installs via their system font manager
                             const downloadUrl = `https://fonts.google.com/download?family=${encodeURIComponent(font.family)}`
                             const a = document.createElement('a')
                             a.href = downloadUrl
                             a.download = `${font.family}.zip`
+                            document.body.appendChild(a)
                             a.click()
-                            setToast(`Downloading ${font.family}... Open the zip and double-click the font to install in Font Book`)
+                            document.body.removeChild(a)
+                            setToast(`Downloading ${font.family}... Extract the zip and double-click the font file to install`)
                             setTimeout(() => setToast(''), 4000)
                           } else {
-                            setToast(`${font.fullName} is already installed in Font Book`)
+                            setToast(`${font.fullName} is already installed on your device`)
                             setTimeout(() => setToast(''), 2000)
                           }
                         }}

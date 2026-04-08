@@ -181,7 +181,11 @@ export default function DashboardPage() {
   // Toast
   const [toast, setToast] = useState('')
 
-  const filteredFonts = allFonts.filter(f => {
+  // Pagination — render fonts in chunks to avoid freezing the browser with 2000+ cards
+  const PAGE_SIZE = 60
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+
+  const filteredFontsAll = allFonts.filter(f => {
     if (search) {
       if (search.includes('|')) {
         const terms = search.split('|').map(s => s.trim().toLowerCase()).filter(Boolean)
@@ -204,6 +208,13 @@ export default function DashboardPage() {
     if (sortBy === 'popular') return 0 // keep original order (Google Fonts = by popularity)
     return a.family.localeCompare(b.family) // 'az'
   })
+
+  const filteredFonts = filteredFontsAll.slice(0, visibleCount)
+
+  // Reset pagination when search/filter/source changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+  }, [search, fontCategory, sortBy, fontSource])
 
   const handleCompare = (font: LocalFont) => {
     if (compareList.find(c => c.familyId === font.familyId)) return
@@ -480,7 +491,7 @@ export default function DashboardPage() {
           <>
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-zinc-500">
-                {search ? `${filteredFonts.length} / ` : ''}{totalCount} fonts detected
+                {search ? `${filteredFontsAll.length} / ` : ''}{totalCount} fonts detected
                 <span className="ml-2 text-xs text-zinc-600">
                   via {method === 'api' ? 'Local Font Access API' : 'canvas detection'}
                 </span>
@@ -558,7 +569,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {filteredFonts.length === 0 ? (
+            {filteredFontsAll.length === 0 ? (
               <div className="text-center py-20">
                 {fontSource === 'local' && method === 'canvas' && 'queryLocalFonts' in window ? (
                   <div className="max-w-md mx-auto space-y-4">
@@ -800,6 +811,16 @@ export default function DashboardPage() {
                   )
                 })}
               </div>
+              {visibleCount < filteredFontsAll.length && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
+                    className="px-6 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition"
+                  >
+                    Load More ({filteredFontsAll.length - visibleCount} remaining)
+                  </button>
+                </div>
+              )}
               </>
             )}
           </>

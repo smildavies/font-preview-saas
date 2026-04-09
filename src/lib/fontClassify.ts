@@ -73,17 +73,13 @@ function measureWidth(ctx: CanvasRenderingContext2D, text: string, fontFamily: s
   return ctx.measureText(text).width
 }
 
-function detectSerifByPixels(ctx: CanvasRenderingContext2D, fontFamily: string): boolean {
+function getRowCounts(ctx: CanvasRenderingContext2D, char: string, fontFamily: string, fontSize: number): { y: number; count: number }[] {
   const canvas = ctx.canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.fillStyle = '#000'
-  // Use lowercase 'l' — capital 'I' has wide bars in some sans-serif fonts (Verdana, Tahoma)
-  ctx.font = `60px "${fontFamily}", sans-serif`
-  ctx.fillText('l', 20, 70)
-
+  ctx.font = `${fontSize}px "${fontFamily}", sans-serif`
+  ctx.fillText(char, 10, 70)
   const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data
-
-  // Build row-by-row pixel counts for the rendered glyph
   const rows: { y: number; count: number }[] = []
   for (let y = 0; y < canvas.height; y++) {
     let count = 0
@@ -92,21 +88,24 @@ function detectSerifByPixels(ctx: CanvasRenderingContext2D, fontFamily: string):
     }
     if (count > 0) rows.push({ y, count })
   }
-  if (rows.length < 5) return false
+  return rows
+}
 
-  // Compare bottom 3 rows vs middle 3 rows
-  // Serif fonts have wider bottom on 'l' due to foot serifs
-  const bot3 = rows.slice(-3).reduce((s, r) => s + r.count, 0) / 3
-  const midIdx = Math.floor(rows.length / 2)
-  const mid3 = rows.slice(midIdx - 1, midIdx + 2).reduce((s, r) => s + r.count, 0) / 3
-
-  if (mid3 === 0) return false
-  return (bot3 / mid3) > 1.5
+function getInkArea(ctx: CanvasRenderingContext2D, char: string, fontFamily: string, fontSize: number): number {
+  const canvas = ctx.canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = '#000'
+  ctx.font = `${fontSize}px "${fontFamily}", sans-serif`
+  ctx.fillText(char, 10, 70)
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+  let total = 0
+  for (let i = 3; i < data.length; i += 4) if (data[i] > 100) total++
+  return total
 }
 
 /**
  * Visually classify a font using canvas measurements.
- * Detects monospace, serif, sans-serif, and script by analyzing rendered glyphs.
+ * Detects monospace, serif, sans-serif, script, display, and monoline.
  */
 export function classifyByVisual(fontFamily: string): FontClass | null {
   if (visualCache.has(fontFamily)) return visualCache.get(fontFamily)!
@@ -124,27 +123,72 @@ export function classifyByVisual(fontFamily: string): FontClass | null {
     return 'monospace'
   }
 
-  // 2. Serif detection via pixel analysis of capital I
-  const hasSerifs = detectSerifByPixels(ctx, fontFamily)
+  // 2. Serif detection via pixel analysis of lowercase 'l'
+  const lRows = getRowCounts(ctx, 'l', fontFamily, 60)
+  let hasSerifs = false
+  if (lRows.length >= 5) {
+    const bot3 = lRows.slice(-3).reduce((s, r) => s + r.count, 0) / 3
+    const top3 = lRows.slice(0, 3).reduce((s, r) => s + r.count, 0) / 3
+    const midIdx = Math.floor(lRows.length / 2)
+    const mid3 = lRows.slice(midIdx - 1, midIdx + 2).reduce((s, r) => s + r.count, 0) / 3
+    if (mid3 > 0) {
+      hasSerifs = (bot3 / mid3) > 1.4 || (top3 / mid3) > 1.4
+    }
+  }
 
-  // 3. Script detection: measure baseline variance and slant
-  // Script fonts often have different baselines and connected letters
-  // We check if lowercase has much wider metrics than expected (connected glyphs)
+  // 3. Script detection — multiple signals
   const normalWidth = measureWidth(ctx, 'abcdefg', fontFamily, size)
   const sansRef = measureWidth(ctx, 'abcdefg', 'Arial', size)
-  // Script fonts tend to be wider due to flourishes
   const widthRatio = sansRef > 0 ? normalWidth / sansRef : 1
 
-  // Also check if italic rendering changes width significantly (scripts are often italic-leaning)
+  // Italic invariance (script fonts are already slanted)
   ctx.font = `italic ${size}px "${fontFamily}", sans-serif`
   const italicWidth = ctx.measureText('abcdefg').width
   ctx.font = `${size}px "${fontFamily}", sans-serif`
   const italicRatio = normalWidth > 0 ? italicWidth / normalWidth : 1
+  const italicInvariant = italicRatio > 0.95 && italicRatio < 1.05
 
-  // Script fonts: much wider than reference AND italic doesn't change much (already slanted)
-  if (widthRatio > 1.3 && italicRatio > 0.95 && italicRatio < 1.05) {
+  // Descender variance — script fonts have varying descenders
+  const metricsP = ctx.measureText('p')
+  const metricsX = ctx.measureText('x')
+  const metricsG = ctx.measureText('g')
+  const descP = metricsP.actualBoundingBoxDescent || 0
+  const descX = metricsX.actualBoundingBoxDescent || 0
+  const descG = metricsG.actualBoundingBoxDescent || 0
+  const ascH = metricsP.actualBoundingBoxAscent || size
+  const descVariance = Math.max(descP, descG) - descX
+  const hasLongDescenders = ascH > 0 && (descVariance / ascH) > 0.15
+
+  const isScript = (widthRatio > 1.2 && italicInvariant) ||
+                   (widthRatio > 1.15 && hasLongDescenders) ||
+                   (italicInvariant && hasLongDescenders && widthRatio > 1.0)
+
+  if (isScript && !hasSerifs) {
     visualCache.set(fontFamily, 'script')
     return 'script'
+  }
+
+  // 4. Display detection — very heavy stroke weight
+  const lInk = getInkArea(ctx, 'l', fontFamily, 60)
+  const lBboxH = lRows.length
+  const avgStrokeWidth = lBboxH > 0 ? lInk / lBboxH : 0
+  if (avgStrokeWidth > 12 && !hasSerifs) {
+    visualCache.set(fontFamily, 'display')
+    return 'display'
+  }
+
+  // 5. Monoline hint — very thin, uniform strokes
+  if (lRows.length >= 5) {
+    const strokeWidths = lRows.map(r => r.count)
+    const midWidths = strokeWidths.slice(2, -2)
+    if (midWidths.length > 3) {
+      const avg = midWidths.reduce((a, b) => a + b, 0) / midWidths.length
+      const variance = midWidths.reduce((s, w) => s + Math.pow(w - avg, 2), 0) / midWidths.length
+      if (avg <= 4 && variance < 1.0 && !hasSerifs) {
+        visualCache.set(fontFamily, 'monoline')
+        return 'monoline'
+      }
+    }
   }
 
   const result: FontClass = hasSerifs ? 'serif' : 'sans-serif'

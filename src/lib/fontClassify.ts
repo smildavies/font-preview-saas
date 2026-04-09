@@ -16,19 +16,27 @@ const KEYWORD_RULES: { kw: string[]; cls?: FontClass }[] = [
 
 /** Well-known monoline / single-line fonts — matched by name for reliable detection */
 const KNOWN_MONOLINE_FONTS = [
+  // Single-line / engraving fonts
   'slf casual', 'slf print', 'slf serif', 'slf sans', 'slf block',
   'halftone', 'hershey', 'cnc vector', 'single line',
   'orach technic', '1cam', 'machine tool', 'rhit',
-  'emsign', 'routed gothic', 'amatic', 'amatic sc',
-  'architects daughter', 'shadows into light', 'gloria hallelujah',
-  'just another hand', 'indie flower', 'permanent marker',
-  'nothing you could do', 'reenie beanie', 'coming soon',
-  'homemade apple', 'rock salt', 'waiting for the sunrise',
-  'la belle aurore', 'cedarville cursive', 'sue ellen francisco',
-  'loved by the king', 'just me again down here',
+  'emsign', 'routed gothic',
+  // Popular handwriting / writing fonts (monoline-style, great for Cricut pens)
+  'amatic', 'amatic sc', 'architects daughter', 'shadows into light',
+  'gloria hallelujah', 'just another hand', 'indie flower',
+  'permanent marker', 'nothing you could do', 'reenie beanie',
+  'coming soon', 'homemade apple', 'rock salt',
+  'waiting for the sunrise', 'la belle aurore', 'cedarville cursive',
+  'sue ellen francisco', 'loved by the king', 'just me again down here',
   'annie use your telescope', 'the girl next door',
   'dawning of a new day', 'over the rainbow',
   'crafty girls', 'schoolbell',
+  'caveat', 'kalam', 'patrick hand', 'handlee',
+  'sedgwick ave', 'gochi hand', 'short stack',
+  'walter turncoat', 'swanky and moo moo', 'sunshiney',
+  'mrs sheppards', 'give you glory', 'fondamento',
+  'covered by your grace', 'kranky', 'jolly lodger',
+  'league script', 'pecita', 'daniel',
 ]
 
 /** Classify a font by name into one of 6 style categories. */

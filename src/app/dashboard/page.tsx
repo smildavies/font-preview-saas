@@ -195,13 +195,13 @@ export default function DashboardPage() {
       }
     }
     if (fontCategory === 'favorites') return favorites.has(f.family)
-    if (fontCategory !== 'all') return classifyFont(f.family) === fontCategory
+    if (fontCategory !== 'all') return classifyFont(f.family, f.style) === fontCategory
     return true
   }).sort((a, b) => {
     if (sortBy === 'za') return b.family.localeCompare(a.family)
     if (sortBy === 'category') {
-      const catA = classifyFont(a.family)
-      const catB = classifyFont(b.family)
+      const catA = classifyFont(a.family, a.style)
+      const catB = classifyFont(b.family, b.style)
       if (catA !== catB) return catA.localeCompare(catB)
       return a.family.localeCompare(b.family)
     }
@@ -700,14 +700,14 @@ export default function DashboardPage() {
                         )}
                         {/* Category badge */}
                         <span className="px-1.5 py-0.5 rounded bg-violet-900/30 text-violet-400 font-medium">
-                          {CLASS_LABELS[classifyFont(font.family) as FontClass] || font.style}
+                          {CLASS_LABELS[classifyFont(font.family, font.style) as FontClass] || font.style}
                         </span>
                         {/* Info tooltip */}
                         <span className="relative group/info cursor-help text-zinc-600 hover:text-zinc-400">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
                           <span className="absolute right-0 top-full mt-1 z-50 hidden group-hover/info:block w-48 p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 shadow-xl">
                             <div className="font-medium text-violet-400 mb-1">{font.fullName}</div>
-                            <div>Style: {classifyFont(font.family)}</div>
+                            <div>Style: {classifyFont(font.family, font.style)}</div>
                             <div>Source: {fontSource === 'google' ? 'Google Fonts' : 'Local'}</div>
                             {font.style && <div>Category: {font.style}</div>}
                           </span>
@@ -832,7 +832,7 @@ export default function DashboardPage() {
                         onClick={() => isPro ? handleExportSVG(font) : (window.location.href = '/pricing')}
                         className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap font-semibold ${
                           isPro
-                            ? isMonolineFont(font.family) || isMonolineFont(font.fullName)
+                            ? isMonolineFont(font.family, font.style) || isMonolineFont(font.fullName, font.style)
                               ? 'border-orange-500/50 text-orange-400 hover:bg-orange-600/15 hover:border-orange-400/60'
                               : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
                             : 'border-zinc-700/50 text-zinc-600 hover:border-orange-700/50 hover:text-orange-400'

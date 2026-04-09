@@ -163,9 +163,6 @@ export default function DashboardPage() {
   const [compareSplit, setCompareSplit] = useState(false)
   const [compareSplitText, setCompareSplitText] = useState('The quick brown fox jumps over the lazy dog')
 
-  // View mode
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
-
   // Sort
   const [sortBy, setSortBy] = useState<'az' | 'za' | 'category' | 'popular'>('az')
 
@@ -584,21 +581,6 @@ export default function DashboardPage() {
                 <option value="category">Category</option>
                 <option value="popular">Default Order</option>
               </select>
-              <div className="flex gap-1 bg-zinc-900 rounded-lg p-1">
-                {(['list', 'grid'] as const).map(mode => (
-                  <button
-                    key={mode}
-                    onClick={() => setViewMode(mode)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition capitalize ${
-                      viewMode === mode
-                        ? 'bg-violet-600 text-white'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    {mode}
-                  </button>
-                ))}
-              </div>
               </div>
             </div>
 
@@ -651,10 +633,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               )}
-              <div className={`grid gap-3 ${
-                viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2' :
-                'grid-cols-1'
-              }`}>
+              <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
                 {filteredFonts.map((font, fontIndex) => {
                   const FREE_PREVIEW_LIMIT = 20
                   const isLocked = !isPro && fontIndex >= FREE_PREVIEW_LIMIT
@@ -1076,7 +1055,6 @@ export default function DashboardPage() {
       {/* Keyboard Shortcuts */}
       <KeyboardShortcuts
         onSearch={() => searchInputRef.current?.focus()}
-        onViewChange={(v) => setViewMode(v as 'list' | 'grid')}
         onOpenMixer={() => setShowFontMixer(true)}
         onOpenMonogram={() => setShowMonogram(true)}
         onOpenPairing={() => { if (filteredFonts[0]) setPairingFont(filteredFonts[0]) }}

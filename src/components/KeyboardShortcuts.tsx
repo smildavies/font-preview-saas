@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 
 interface KeyboardShortcutsProps {
   onSearch: () => void
-  onViewChange: (view: string) => void
   onOpenMixer?: () => void
   onOpenMonogram?: () => void
   onOpenPairing?: () => void
@@ -13,15 +12,13 @@ interface KeyboardShortcutsProps {
 const SHORTCUTS = [
   { key: '/', label: 'Search fonts' },
   { key: 'Esc', label: 'Close modal' },
-  { key: 'G', label: 'Grid view' },
-  { key: 'L', label: 'List view' },
   { key: 'M', label: 'Font Mixer' },
   { key: 'N', label: 'Monogram Builder' },
   { key: 'P', label: 'AI Pairing' },
   { key: '?', label: 'Show shortcuts' },
 ]
 
-export default function KeyboardShortcuts({ onSearch, onViewChange, onOpenMixer, onOpenMonogram, onOpenPairing }: KeyboardShortcutsProps) {
+export default function KeyboardShortcuts({ onSearch, onOpenMixer, onOpenMonogram, onOpenPairing }: KeyboardShortcutsProps) {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
@@ -32,15 +29,13 @@ export default function KeyboardShortcuts({ onSearch, onViewChange, onOpenMixer,
       if (e.key === '/') { e.preventDefault(); onSearch() }
       if (e.key === '?') setShow(v => !v)
       if (e.key === 'Escape') setShow(false)
-      if (e.key === 'g') onViewChange('grid')
-      if (e.key === 'l') onViewChange('list')
       if (e.key === 'm' && onOpenMixer) onOpenMixer()
       if (e.key === 'n' && onOpenMonogram) onOpenMonogram()
       if (e.key === 'p' && onOpenPairing) onOpenPairing()
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [onSearch, onViewChange, onOpenMixer, onOpenMonogram, onOpenPairing])
+  }, [onSearch, onOpenMixer, onOpenMonogram, onOpenPairing])
 
   if (!show) return null
 

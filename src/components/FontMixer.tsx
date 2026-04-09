@@ -457,7 +457,7 @@ export default function FontMixer({ fonts, onClose, isPro, fontSource, loadGoogl
           {/* Live Preview Canvas */}
           <div ref={canvasRef}
             className="rounded-xl border border-zinc-700 p-8 min-h-[120px] flex items-center flex-wrap gap-0 overflow-hidden"
-            style={{ backgroundColor: bgColor, justifyContent: textAlign === 'left' ? 'flex-start' : textAlign === 'right' ? 'flex-end' : 'center' }}>
+            style={{ backgroundColor: bgColor, justifyContent: 'center' }}>
             {assignments.map((a, i) => {
               const seed = seeds[i] || { rot: 0, sizeJit: 0, baseShift: 0, opacity: 1, weight: 400, colorIdx: i, bgHue: 0 }
               const rot = rotation * seed.rot + (chaos > 0 ? chaosMult * 15 * seed.rot : 0)

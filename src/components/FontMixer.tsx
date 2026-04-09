@@ -83,7 +83,7 @@ export default function FontMixer({ fonts, onClose, isPro, fontSource, loadGoogl
   const [fontSize, setFontSize] = useState(72)
   const [bgColor, setBgColor] = useState('#09090b')
   const [textColor, setTextColor] = useState('#ffffff')
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('center')
+  const textAlign = 'center' as const
   const [copied, setCopied] = useState(false)
   const canvasRef = useRef<HTMLDivElement>(null)
   const fontGridRef = useRef<HTMLDivElement>(null)
@@ -446,19 +446,8 @@ export default function FontMixer({ fonts, onClose, isPro, fontSource, loadGoogl
             </div>
           </div>
 
-          {/* Alignment + Reshuffle */}
+          {/* Reshuffle */}
           <div className="flex items-center gap-2">
-            {(['left', 'center', 'right'] as const).map(align => (
-              <button key={align} onClick={() => setTextAlign(align)}
-                className={`p-1.5 rounded-lg transition ${textAlign === align ? 'bg-violet-600/20 text-violet-400 border border-violet-600/30' : 'text-zinc-500 border border-zinc-700 hover:text-zinc-300'}`}
-                title={`Align ${align}`}>
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  {align === 'left' && <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></>}
-                  {align === 'center' && <><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></>}
-                  {align === 'right' && <><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></>}
-                </svg>
-              </button>
-            ))}
             <button onClick={handleReshuffle}
               className="ml-auto px-3 py-1.5 rounded-lg text-xs font-medium bg-violet-600/20 text-violet-400 border border-violet-600/30 hover:bg-violet-600/30 transition">
               Re-shuffle

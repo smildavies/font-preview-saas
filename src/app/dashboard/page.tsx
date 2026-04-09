@@ -117,7 +117,7 @@ export default function DashboardPage() {
   const [italic, setItalic] = useState(false)
   const [uppercase, setUppercase] = useState(false)
   const [underline, setUnderline] = useState(false)
-  const [textAlign, setTextAlign] = useState('center')
+  const textAlign = 'center'
 
   // Modals
   const [glyphFont, setGlyphFont] = useState<LocalFont | null>(null)
@@ -437,7 +437,7 @@ export default function DashboardPage() {
         italic={italic} setItalic={setItalic}
         uppercase={uppercase} setUppercase={setUppercase}
         underline={underline} setUnderline={setUnderline}
-        textAlign={textAlign} setTextAlign={setTextAlign}
+        textAlign={textAlign} setTextAlign={() => {}}
         isPro={isPro}
         searchInputRef={searchInputRef}
       />

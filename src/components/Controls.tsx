@@ -303,39 +303,6 @@ export default function Controls({
         </div>
       </div>
 
-      {/* Text alignment */}
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-zinc-500">Align</label>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setTextAlign('left')}
-            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
-              textAlign === 'left' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-            }`}
-            title="Align Left"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
-          </button>
-          <button
-            onClick={() => setTextAlign('center')}
-            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
-              textAlign === 'center' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-            }`}
-            title="Align Center"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-          </button>
-          <button
-            onClick={() => setTextAlign('right')}
-            className={`flex items-center justify-center rounded-lg px-3 py-1.5 transition-colors ${
-              textAlign === 'right' ? 'bg-violet-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-            }`}
-            title="Align Right"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useUser } from '@/hooks/useUser'
 import { useLocalFonts, type LocalFont } from '@/hooks/useLocalFonts'
 import { useGoogleFonts } from '@/hooks/useGoogleFonts'
 import { useRecentFonts } from '@/hooks/useRecentFonts'
-import { classifyFont, CLASS_LABELS, type FontClass } from '@/lib/fontClassify'
+import { classifyFont, isMonolineFont, CLASS_LABELS, type FontClass } from '@/lib/fontClassify'
 import Controls from '@/components/Controls'
 import GlyphModal from '@/components/GlyphModal'
 import MockupModal from '@/components/MockupModal'
@@ -268,6 +268,39 @@ export default function DashboardPage() {
     link.click()
     setToast(`Exported ${font.fullName}`)
     setTimeout(() => setToast(''), 2000)
+  }
+
+  const handleExportSVG = (font: LocalFont) => {
+    const previewStr = uppercase ? (text || 'Hello World').toUpperCase() : (text || 'Hello World')
+    const fs = fontSize || 48
+    const lh = lineHeight * fs
+    const lines = previewStr.split('\n').length > 1 ? previewStr.split('\n') : [previewStr]
+    const svgHeight = Math.max(fs * 2, lines.length * lh + fs)
+    const svgWidth = 800
+
+    const textElements = lines.map((line, i) => {
+      const y = fs + i * lh
+      return `<text x="40" y="${y}" font-family="'${font.family}', sans-serif" font-size="${fs}" fill="${textColor}" ${bold ? 'font-weight="bold"' : ''} ${italic ? 'font-style="italic"' : ''} letter-spacing="${letterSpacing}" ${underline ? 'text-decoration="underline"' : ''}>${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>`
+    }).join('\n    ')
+
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" width="${svgWidth}" height="${svgHeight}">
+  <rect width="100%" height="100%" fill="${bgColor}"/>
+  <text x="40" y="${fs * 0.4}" font-family="sans-serif" font-size="14" fill="#a78bfa">${font.fullName}</text>
+    ${textElements}
+</svg>`
+
+    const blob = new Blob([svg], { type: 'image/svg+xml' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.download = `${font.fullName.replace(/[^a-zA-Z0-9]/g, '_')}.svg`
+    link.href = url
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    setToast(`Exported ${font.fullName} as SVG — open in Cricut, Silhouette, or any design tool`)
+    setTimeout(() => setToast(''), 4000)
   }
 
   const addToCollection = useCallback((fontFamily: string) => {
@@ -794,6 +827,19 @@ export default function DashboardPage() {
                       >
                         {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
                         Export PNG
+                      </button>
+                      <button
+                        onClick={() => isPro ? handleExportSVG(font) : (window.location.href = '/pricing')}
+                        className={`px-2 py-0.5 text-[10px] border rounded transition flex items-center gap-0.5 whitespace-nowrap font-semibold ${
+                          isPro
+                            ? isMonolineFont(font.family) || isMonolineFont(font.fullName)
+                              ? 'border-orange-500/50 text-orange-400 hover:bg-orange-600/15 hover:border-orange-400/60'
+                              : 'border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500'
+                            : 'border-zinc-700/50 text-zinc-600 hover:border-orange-700/50 hover:text-orange-400'
+                        }`}
+                      >
+                        {!isPro && <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>}
+                        SVG
                       </button>
                       <button
                         onClick={() => isPro ? setWeddingFont(font) : (window.location.href = '/pricing')}

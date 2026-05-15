@@ -339,7 +339,7 @@ export default function DashboardPage() {
   }, [fontSource, filteredFonts, loadGoogleFont])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={compareList.length > 0 && isPro ? { paddingBottom: '45vh' } : undefined}>
       {/* Browser Banner */}
       <BrowserBanner />
 

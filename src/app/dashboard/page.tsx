@@ -339,7 +339,7 @@ export default function DashboardPage() {
   }, [fontSource, filteredFonts, loadGoogleFont])
 
   return (
-    <div className="min-h-screen" style={compareList.length > 0 && isPro ? { paddingBottom: '45vh' } : undefined}>
+    <div className="min-h-screen lg:transition-all" style={compareList.length > 0 && isPro ? { paddingRight: '340px' } : undefined}>
       {/* Browser Banner */}
       <BrowserBanner />
 
@@ -852,9 +852,9 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Compare Panel */}
+      {/* Compare Panel — right sidebar */}
       {compareList.length > 0 && isPro && (
-        <div className="fixed bottom-0 left-0 right-0 z-[100] border-t-2 border-violet-600 bg-zinc-950 p-5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] max-h-[40vh] overflow-y-auto">
+        <div className="fixed top-0 right-0 bottom-0 z-[100] border-l-2 border-violet-600 bg-zinc-950 p-5 shadow-[-8px_0_30px_rgba(0,0,0,0.5)] w-[340px] overflow-y-auto">
           <div className="flex items-center gap-3 mb-3">
             <h3 className="text-sm font-semibold text-zinc-300">
               Compare ({compareList.length})
@@ -910,11 +910,11 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="flex flex-col gap-3 pb-2">
             {compareList.map(font => {
               if (fontSource === 'google') loadGoogleFont(font.family)
               return (
-              <div key={font.familyId} className="flex-shrink-0 min-w-[250px] border border-zinc-800 rounded-lg p-3 relative" style={{ backgroundColor: bgColor }}>
+              <div key={font.familyId} className="w-full border border-zinc-800 rounded-lg p-3 relative" style={{ backgroundColor: bgColor }}>
                 <button
                   onClick={() => setCompareList(prev => prev.filter(f => f.familyId !== font.familyId))}
                   className="absolute top-1 right-1 w-5 h-5 rounded-full bg-pink-500/20 text-pink-400 text-xs flex items-center justify-center hover:bg-pink-500/40"
